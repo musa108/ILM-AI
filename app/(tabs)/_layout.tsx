@@ -1,57 +1,66 @@
+import { FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons';
+import { Tabs } from 'expo-router';
 import React from 'react';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { Link, Tabs } from 'expo-router';
-import { Pressable } from 'react-native';
 
-import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
-import { useClientOnlyValue } from '@/components/useClientOnlyValue';
-
-// You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
-function TabBarIcon(props: {
-  name: React.ComponentProps<typeof FontAwesome>['name'];
-  color: string;
-}) {
-  return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
-}
+import Colors from '@/constants/Colors';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  const currentColors = Colors[colorScheme ?? 'light']
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        // Disable the static render of the header on web
-        // to prevent a hydration error in React Navigation v6.
-        headerShown: useClientOnlyValue(false, true),
+        tabBarActiveTintColor: currentColors.tint,
+        headerShown: false,
+        tabBarStyle: {
+          paddingBottom: 5,
+          height: 60,
+          backgroundColor: currentColors.background,
+          borderTopWidth: 0,
+          elevation: 0,
+        }
       }}>
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Tab One',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-          headerRight: () => (
-            <Link href="/modal" asChild>
-              <Pressable>
-                {({ pressed }) => (
-                  <FontAwesome
-                    name="info-circle"
-                    size={25}
-                    color={Colors[colorScheme ?? 'light'].text}
-                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-                  />
-                )}
-              </Pressable>
-            </Link>
-          ),
+          title: 'Chat',
+          tabBarIcon: ({ color }: { color: string }) => <FontAwesome5 name="comment-alt" size={20} color={color} />,
         }}
       />
       <Tabs.Screen
-        name="two"
+        name="quiz"
         options={{
-          title: 'Tab Two',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          title: 'Quiz',
+          tabBarIcon: ({ color }: { color: string }) => <MaterialCommunityIcons name="brain" size={24} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="prayer"
+        options={{
+          title: 'Prayer',
+          tabBarIcon: ({ color }: { color: string }) => <FontAwesome5 name="mosque" size={18} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="podcast"
+        options={{
+          title: 'Podcast',
+          tabBarIcon: ({ color }: { color: string }) => <FontAwesome5 name="podcast" size={20} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: 'Profile',
+          tabBarIcon: ({ color }: { color: string }) => <FontAwesome5 name="user-alt" size={18} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="change-password"
+        options={{
+          href: null,
         }}
       />
     </Tabs>

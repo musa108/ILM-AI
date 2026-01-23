@@ -1,19 +1,23 @@
-const tintColorLight = '#2f95dc';
-const tintColorDark = '#fff';
+const tintColorLight = '#0C3529'; // Deep Islamic Green
+const tintColorDark = '#F7E7CE'; // Champagne/Gold
 
 export default {
   light: {
-    text: '#000',
-    background: '#fff',
+    text: '#1A1A1A',
+    background: '#FFFFFF',
     tint: tintColorLight,
-    tabIconDefault: '#ccc',
+    tabIconDefault: '#9BA3A1',
     tabIconSelected: tintColorLight,
+    secondary: '#EBF2EE',
+    accent: '#D4AF37', // Gold
   },
   dark: {
-    text: '#fff',
-    background: '#000',
+    text: '#F5F5F5',
+    background: '#05110E',
     tint: tintColorDark,
-    tabIconDefault: '#ccc',
+    tabIconDefault: '#4A5D59',
     tabIconSelected: tintColorDark,
+    secondary: '#0C3529',
+    accent: '#D4AF37',
   },
 };
