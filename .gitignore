@@ -8,7 +8,7 @@ node_modules/
 dist/
 web-build/
 expo-env.d.ts
-.env
+
 
 # Native
 .kotlin/
@@ -40,3 +40,9 @@ yarn-error.*
 # generated native folders
 /ios
 /android
+
+# Environment variables
+.env
+.env.local
+.env.development
+.env.production

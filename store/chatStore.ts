@@ -1,4 +1,4 @@
-import { getGeminiResponse, SYSTEM_PROMPT } from '@/lib/gemini'
+import { getAIResponse, SYSTEM_PROMPT } from '@/lib/ai'
 import { supabase } from '@/lib/supabase'
 import { create } from 'zustand'
 
@@ -142,7 +142,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
                 }))
             ]
 
-            const aiResponse = await getGeminiResponse(content, history)
+            const aiResponse = await getAIResponse(content, history)
 
             const assistantMessage: Message = {
                 id: Math.random().toString(),

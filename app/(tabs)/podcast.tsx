@@ -1,6 +1,6 @@
 import { useColorScheme } from '@/components/useColorScheme'
 import Colors from '@/constants/Colors'
-import { getGeminiResponse } from '@/lib/gemini'
+import { getAIResponse } from '@/lib/ai'
 import { FontAwesome5 } from '@expo/vector-icons'
 import * as Speech from 'expo-speech'
 import React, { useState } from 'react'
@@ -40,8 +40,8 @@ export default function Podcast() {
         setTopicsLoading(true)
         try {
             const prompt = "Generate 5 short, engaging 1-3 word titles for Islamic podcast topics. Return strictly a comma-separated list. Example: Patience, Zakat, Afterlife, Prayer, Hajj."
-            const response = await getGeminiResponse(prompt, [])
-            const topics = response.split(',').map(t => t.trim()).slice(0, 5)
+            const response = await getAIResponse(prompt, [])
+            const topics = response.split(',').map((t: string) => t.trim()).slice(0, 5)
             setSuggestedTopics(topics)
         } catch (e) {
             console.error('Error generating topics', e)
@@ -62,7 +62,7 @@ export default function Podcast() {
       Format: Just the spoken text, no speaker labels or sound effect cues. 
       Start directly with "Welcome to ILM AI Podcast, today we are discussing..."`
 
-            const script = await getGeminiResponse(prompt, [])
+            const script = await getAIResponse(prompt, [])
             setCurrentScript(script)
             speak(script)
         } catch (error) {
