@@ -36,7 +36,14 @@ export default {
         plugins: [
             "expo-router",
             "expo-font",
-            "expo-audio"
+            "expo-audio",
+            [
+                "expo-notifications",
+                {
+                    "icon": "./assets/icon.png",
+                    "color": "#0d5f5f"
+                }
+            ]
         ],
         extra: {
             router: {},
