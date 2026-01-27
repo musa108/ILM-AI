@@ -4,22 +4,24 @@ import { Platform } from 'react-native';
 
 const ADHAN_URL = 'https://archive.org/download/adhan-arabb-world/adhan.mp3';
 
-Notifications.setNotificationHandler({
-    handleNotification: async (notification) => {
-        // Check if it's a prayer notification
-        const isPrayer = notification.request.content.title?.toLowerCase().includes('prayer');
-        if (isPrayer) {
-            playAdhanAndVibrate();
-        }
-        return {
-            shouldShowAlert: true,
-            shouldPlaySound: true,
-            shouldSetBadge: false,
-            shouldShowBanner: true,
-            shouldShowList: true,
-        };
-    },
-});
+if (Platform.OS !== 'web') {
+    Notifications.setNotificationHandler({
+        handleNotification: async (notification) => {
+            // Check if it's a prayer notification
+            const isPrayer = notification.request.content.title?.toLowerCase().includes('prayer');
+            if (isPrayer) {
+                playAdhanAndVibrate();
+            }
+            return {
+                shouldShowAlert: true,
+                shouldPlaySound: true,
+                shouldSetBadge: false,
+                shouldShowBanner: true,
+                shouldShowList: true,
+            };
+        },
+    });
+}
 
 // We can't use hooks like useAudioPlayer outside of components easily,
 // but expo-audio has an imperative API as well.
@@ -66,6 +68,8 @@ const QUOTES = [
 ];
 
 export async function setupNotifications() {
+    if (Platform.OS === 'web') return;
+
     const { status: existingStatus } = await Notifications.getPermissionsAsync();
     let finalStatus = existingStatus;
 

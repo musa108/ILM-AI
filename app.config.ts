@@ -4,13 +4,13 @@ export default {
         slug: "ilm-ai",
         version: "1.0.0",
         orientation: "portrait",
-        icon: "./assets/images/icon.png",
+        icon: "./assets/icon.png",
         scheme: "quranai",
         userInterfaceStyle: "automatic",
         splash: {
-            image: "./assets/images/splash-icon.png",
+            image: "./assets/splash.png",
             resizeMode: "contain",
-            backgroundColor: "#ffffff"
+            backgroundColor: "#0d5f5f"
         },
         ios: {
             supportsTablet: true,
@@ -21,8 +21,8 @@ export default {
         },
         android: {
             adaptiveIcon: {
-                foregroundImage: "./assets/images/adaptive-icon.png",
-                backgroundColor: "#ffffff"
+                foregroundImage: "./assets/icon.png",
+                backgroundColor: "#0d5f5f"
             },
             edgeToEdgeEnabled: true,
             predictiveBackGestureEnabled: false,

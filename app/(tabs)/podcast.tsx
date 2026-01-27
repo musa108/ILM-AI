@@ -253,10 +253,7 @@ const styles = StyleSheet.create({
         borderRadius: 35,
         justifyContent: 'center',
         alignItems: 'center',
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.2,
-        shadowRadius: 5,
+        boxShadow: '0px 4px 5px rgba(0, 0, 0, 0.2)',
         elevation: 8,
     },
     suggestedContainer: {

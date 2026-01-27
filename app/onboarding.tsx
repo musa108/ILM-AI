@@ -6,9 +6,9 @@ import React from 'react';
 import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
 
-const { width, height } = Dimensions.get('window');
 
 export default function Onboarding() {
+    const { width, height } = Dimensions.get('window');
     const router = useRouter();
     const colorScheme = useColorScheme() ?? 'light';
     const currentColors = Colors[colorScheme as keyof typeof Colors];
@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     },
     header: {
         alignItems: 'center',
-        marginTop: height * 0.1,
+        paddingTop: '20%',
     },
     title: {
         fontSize: 40,
@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
         marginTop: 2,
     },
     footer: {
-        marginBottom: height * 0.05,
+        paddingBottom: '10%',
         gap: 15,
     },
     button: {
@@ -138,10 +138,7 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         justifyContent: 'center',
         alignItems: 'center',
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.2,
-        shadowRadius: 5,
+        boxShadow: '0px 4px 5px rgba(0, 0, 0, 0.2)',
         elevation: 8,
     },
     buttonText: {

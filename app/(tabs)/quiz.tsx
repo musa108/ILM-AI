@@ -8,8 +8,6 @@ import { Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from
 import Animated, { FadeInDown, LinearTransition } from 'react-native-reanimated'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
-const { width } = Dimensions.get('window')
-
 const shuffleQuestions = (count: number) => {
     return [...ALL_QUESTIONS]
         .sort(() => Math.random() - 0.5)
@@ -17,6 +15,7 @@ const shuffleQuestions = (count: number) => {
 }
 
 export default function Quiz() {
+    const { width } = Dimensions.get('window')
     const [quizQuestions, setQuizQuestions] = useState(() => shuffleQuestions(10))
     const [currentQuestion, setCurrentQuestion] = useState(0)
     const [score, setScore] = useState(0)
