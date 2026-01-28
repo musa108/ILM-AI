@@ -3,7 +3,7 @@ import Constants from 'expo-constants';
 const GROQ_API_KEY = Constants.expoConfig?.extra?.groqApiKey;
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
 
-export const getAIResponse = async (prompt: string, history: { role: string; parts: { text: string }[] }[]) => {
+export const getAIResponse = async (prompt: string, history: { role: string; parts: { text: string }[] }[], language: string = 'en') => {
     // Model Selection: Llama-3.1-8b-instant is perfect for free tier scale and speed.
     const MODEL_ID = 'llama-3.1-8b-instant';
 
@@ -11,9 +11,21 @@ export const getAIResponse = async (prompt: string, history: { role: string; par
         throw new Error('Groq API Key is not configured. Please check your environment variables.');
     }
 
+    // Map language code to full name
+    const languageNames: Record<string, string> = {
+        en: 'English',
+        ar: 'Arabic',
+        ha: 'Hausa',
+        yo: 'Yoruba'
+    };
+    const targetLanguage = languageNames[language] || 'English';
+
     // Format history for OpenAI compatible API
     const messages = [
-        { role: 'system', content: SYSTEM_PROMPT.trim() },
+        {
+            role: 'system',
+            content: `${SYSTEM_PROMPT.trim()}\n\nCRITICAL: You MUST respond strictly in the ${targetLanguage} language. Use the appropriate script (e.g., Arabic script for Arabic, Latin script for Hausa/Yoruba/English).`
+        },
         ...(history || []).map(msg => ({
             role: msg.role === 'user' ? 'user' : 'assistant',
             content: msg.parts[0].text

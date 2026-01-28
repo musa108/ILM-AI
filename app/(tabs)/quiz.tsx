@@ -1,5 +1,6 @@
 import { useColorScheme } from '@/components/useColorScheme'
 import Colors from '@/constants/Colors'
+import { useLanguage } from '@/context/LanguageContext'
 import { ALL_QUESTIONS } from '@/data/questions'
 import { FontAwesome5 } from '@expo/vector-icons'
 import { LinearGradient } from 'expo-linear-gradient'
@@ -15,6 +16,7 @@ const shuffleQuestions = (count: number) => {
 }
 
 export default function Quiz() {
+    const { language, t } = useLanguage()
     const { width } = Dimensions.get('window')
     const [quizQuestions, setQuizQuestions] = useState(() => shuffleQuestions(10))
     const [currentQuestion, setCurrentQuestion] = useState(0)
@@ -22,7 +24,7 @@ export default function Quiz() {
     const [showScore, setShowScore] = useState(false)
     const [selectedOption, setSelectedOption] = useState<number | null>(null)
     const colorScheme = useColorScheme() ?? 'light'
-    const currentColors = Colors[colorScheme]
+    const currentColors = Colors[colorScheme as keyof typeof Colors]
 
     const handleAnswer = (index: number) => {
         setSelectedOption(index)
@@ -64,9 +66,9 @@ export default function Quiz() {
                     style={styles.scoreContainer}
                 >
                     <FontAwesome5 name="trophy" size={100} color={currentColors.accent} />
-                    <Text style={[styles.scoreTitle, { color: currentColors.text }]}>MashaAllah!</Text>
+                    <Text style={[styles.scoreTitle, { color: currentColors.text }]}>{t('quiz_mashaallah')}</Text>
                     <Text style={[styles.scoreText, { color: currentColors.text + '80' }]}>
-                        You completed the quiz with a score of
+                        {t('quiz_complete')}
                     </Text>
                     <View style={[styles.scoreBadge, { backgroundColor: currentColors.tint }]}>
                         <Text style={styles.scoreBadgeText}>{score} / {quizQuestions.length}</Text>
@@ -75,7 +77,7 @@ export default function Quiz() {
                         style={[styles.primaryButton, { backgroundColor: currentColors.tint }]}
                         onPress={resetQuiz}
                     >
-                        <Text style={styles.buttonText}>Try Again</Text>
+                        <Text style={styles.buttonText}>{t('quiz_try_again')}</Text>
                     </TouchableOpacity>
                 </Animated.View>
             </View>
@@ -86,7 +88,7 @@ export default function Quiz() {
         <SafeAreaView style={[styles.container, { backgroundColor: currentColors.background }]}>
             <ScrollView contentContainerStyle={styles.scrollContent}>
                 <View style={styles.header}>
-                    <Text style={[styles.headerTitle, { color: currentColors.text }]}>Knowledge Test</Text>
+                    <Text style={[styles.headerTitle, { color: currentColors.text }]}>{t('quiz_title')}</Text>
                     <View style={[styles.progressBarBg, { backgroundColor: currentColors.secondary }]}>
                         <Animated.View
                             layout={LinearTransition}
@@ -97,7 +99,7 @@ export default function Quiz() {
                         />
                     </View>
                     <Text style={[styles.questionCount, { color: currentColors.text + '60' }]}>
-                        Question {currentQuestion + 1} of {quizQuestions.length}
+                        {t('quiz_question_count')} {currentQuestion + 1} {t('quiz_of')} {quizQuestions.length}
                     </Text>
                 </View>
 

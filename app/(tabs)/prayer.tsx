@@ -1,5 +1,6 @@
 import { useColorScheme } from '@/components/useColorScheme'
 import Colors from '@/constants/Colors'
+import { useLanguage } from '@/context/LanguageContext'
 import { QURAN_VERSES } from '@/data/quranVerses'
 import { FontAwesome5 } from '@expo/vector-icons'
 import { Prayer as AdhanPrayer, CalculationMethod, Coordinates, PrayerTimes } from 'adhan'
@@ -19,6 +20,7 @@ export default function PrayerScreen() {
     const [refreshing, setRefreshing] = useState(false)
     const [randomVerse, setRandomVerse] = useState(QURAN_VERSES[0])
 
+    const { language, t } = useLanguage()
     const colorScheme = useColorScheme() ?? 'light'
     const currentColors = Colors[colorScheme as keyof typeof Colors]
 
@@ -92,9 +94,9 @@ export default function PrayerScreen() {
                 refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={currentColors.tint} />}
             >
                 <View style={styles.header}>
-                    <Text style={[styles.headerTitle, { color: currentColors.text }]}>Prayer Times</Text>
+                    <Text style={[styles.headerTitle, { color: currentColors.text }]}>{t('prayer_times')}</Text>
                     <Text style={[styles.headerSubtitle, { color: currentColors.text + '80' }]}>
-                        {new Date().toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                        {new Date().toLocaleDateString(language === 'ar' ? 'ar-EG' : undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
                     </Text>
                 </View>
 
@@ -111,21 +113,20 @@ export default function PrayerScreen() {
                                 style={StyleSheet.absoluteFill}
                             />
                             <View style={styles.nextPrayerContainer}>
-                                <Text style={styles.nextPrayerLabel}>Next Prayer</Text>
-                                <Text style={styles.nextPrayerName}>{nextPrayer !== 'None' ? nextPrayer : 'Fajr (Is Tomorrow)'}</Text>
-                                {/* Simple logic for next time display could be added here */}
+                                <Text style={styles.nextPrayerLabel}>{t('prayer_next')}</Text>
+                                <Text style={styles.nextPrayerName}>{nextPrayer && nextPrayer !== 'None' ? t(`prayer_${nextPrayer.toLowerCase()}` as any) : t('prayer_fajr')}</Text>
                             </View>
                             <FontAwesome5 name="mosque" size={60} color="rgba(255,255,255,0.2)" style={styles.cardIcon} />
                         </Animated.View>
 
                         <View style={styles.timesContainer}>
                             {[
-                                { name: 'Fajr', time: prayerTimes.fajr, icon: 'cloud-sun' },
-                                { name: 'Sunrise', time: prayerTimes.sunrise, icon: 'sun' },
-                                { name: 'Dhuhr', time: prayerTimes.dhuhr, icon: 'sun' },
-                                { name: 'Asr', time: prayerTimes.asr, icon: 'cloud-sun' },
-                                { name: 'Maghrib', time: prayerTimes.maghrib, icon: 'moon' },
-                                { name: 'Isha', time: prayerTimes.isha, icon: 'moon' },
+                                { name: 'Fajr', key: 'prayer_fajr', time: prayerTimes.fajr, icon: 'cloud-sun' },
+                                { name: 'Sunrise', key: 'prayer_sunrise', time: prayerTimes.sunrise, icon: 'sun' },
+                                { name: 'Dhuhr', key: 'prayer_dhuhr', time: prayerTimes.dhuhr, icon: 'sun' },
+                                { name: 'Asr', key: 'prayer_asr', time: prayerTimes.asr, icon: 'cloud-sun' },
+                                { name: 'Maghrib', key: 'prayer_maghrib', time: prayerTimes.maghrib, icon: 'moon' },
+                                { name: 'Isha', key: 'prayer_isha', time: prayerTimes.isha, icon: 'moon' },
                             ].map((prayer, index) => (
                                 <Animated.View
                                     key={prayer.name}
@@ -141,7 +142,7 @@ export default function PrayerScreen() {
                                 >
                                     <View style={styles.timeLabelRef}>
                                         <FontAwesome5 name={prayer.icon} size={16} color={currentColors.text + '80'} style={{ width: 25 }} />
-                                        <Text style={[styles.timeLabel, { color: currentColors.text }]}>{prayer.name}</Text>
+                                        <Text style={[styles.timeLabel, { color: currentColors.text }]}>{t(prayer.key as any)}</Text>
                                     </View>
                                     <Text style={[styles.timeValue, { color: currentColors.text }]}>{formatTime(prayer.time)}</Text>
                                 </Animated.View>
@@ -151,7 +152,7 @@ export default function PrayerScreen() {
                 ) : null}
 
                 <Animated.View entering={FadeInUp.delay(600)} style={[styles.verseContainer, { backgroundColor: currentColors.secondary + '20' }]}>
-                    <Text style={[styles.sectionTitle, { color: currentColors.tint }]}>Verse of the Moment</Text>
+                    <Text style={[styles.sectionTitle, { color: currentColors.tint }]}>{t('prayer_verse_moment')}</Text>
                     <Text style={[styles.arabicText, { color: currentColors.text }]}>{randomVerse.arabic}</Text>
                     <Text style={[styles.englishText, { color: currentColors.text }]}>"{randomVerse.english}"</Text>
                     <Text style={[styles.referenceText, { color: currentColors.text + '60' }]}>- {randomVerse.reference}</Text>

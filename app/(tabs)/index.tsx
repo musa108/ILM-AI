@@ -2,6 +2,7 @@ import { ChatHistory } from '@/components/ChatHistory'
 import { useColorScheme } from '@/components/useColorScheme'
 import Colors from '@/constants/Colors'
 import { useAuth } from '@/context/AuthContext'
+import { useLanguage } from '@/context/LanguageContext'
 import { useChatStore } from '@/store/chatStore'
 import { FontAwesome5 } from '@expo/vector-icons'
 import { LinearGradient } from 'expo-linear-gradient'
@@ -28,6 +29,8 @@ export default function Chat() {
     }
   }, [user])
 
+  const { language, t } = useLanguage()
+
   const handleSend = async (textToSend?: string) => {
     const content = textToSend || inputText.trim()
     if (!content || !user) return
@@ -35,7 +38,7 @@ export default function Chat() {
     setInputText('')
 
     try {
-      await sendMessage(user.id, content)
+      await sendMessage(user.id, content, language)
     } catch (e) {
       alert("Message failed to send. Please checking your internet or database connection.")
     }

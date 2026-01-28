@@ -8,6 +8,7 @@ import 'react-native-reanimated';
 
 import { useColorScheme } from '@/components/useColorScheme';
 import { AuthProvider, useAuth } from '@/context/AuthContext';
+import { LanguageProvider } from '@/context/LanguageContext';
 import { supabase } from '@/lib/supabase';
 
 export {
@@ -107,7 +108,9 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <AuthProvider>
-        <InitialLayout />
+        <LanguageProvider>
+          <InitialLayout />
+        </LanguageProvider>
       </AuthProvider>
     </SafeAreaProvider>
   );

@@ -1,5 +1,6 @@
 import { useColorScheme } from '@/components/useColorScheme'
 import Colors from '@/constants/Colors'
+import { useLanguage } from '@/context/LanguageContext'
 import { getAIResponse } from '@/lib/ai'
 import { FontAwesome5 } from '@expo/vector-icons'
 import * as Speech from 'expo-speech'
@@ -16,6 +17,7 @@ export default function Podcast() {
     const [suggestedTopics, setSuggestedTopics] = useState<string[]>([])
     const [topicsLoading, setTopicsLoading] = useState(false)
 
+    const { language, t } = useLanguage()
     const colorScheme = useColorScheme() ?? 'light'
     const currentColors = Colors[colorScheme as keyof typeof Colors]
 
@@ -40,7 +42,7 @@ export default function Podcast() {
         setTopicsLoading(true)
         try {
             const prompt = "Generate 5 short, engaging 1-3 word titles for Islamic podcast topics. Return strictly a comma-separated list. Example: Patience, Zakat, Afterlife, Prayer, Hajj."
-            const response = await getAIResponse(prompt, [])
+            const response = await getAIResponse(prompt, [], language)
             const topics = response.split(',').map((t: string) => t.trim()).slice(0, 5)
             setSuggestedTopics(topics)
         } catch (e) {
@@ -60,11 +62,12 @@ export default function Podcast() {
             const prompt = `Write a short, engaging 2-minute podcast script about "${selectedTopic}" in Islam. 
       Style: Conversational, warm, and informative. 
       Format: Just the spoken text, no speaker labels or sound effect cues. 
-      Start directly with "Welcome to ILM AI Podcast, today we are discussing..."`
+      Start directly with a greeting and introduction in the selected language.`
 
-            const script = await getAIResponse(prompt, [])
+            const script = await getAIResponse(prompt, [], language)
             setCurrentScript(script)
-            speak(script)
+            // Removed automatic speak(script) to comply with browser autoplay policies
+            // User will now manually click "Play" to listen.
         } catch (error) {
             console.error('Error generating podcast:', error)
         } finally {
@@ -76,7 +79,7 @@ export default function Podcast() {
         console.log('Podcast: Attempting to speak text of length:', text.length)
         setIsPlaying(true)
         Speech.speak(text, {
-            language: 'en',
+            language: language,
             pitch: 1.0,
             rate: 0.9,
             onStart: () => {

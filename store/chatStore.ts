@@ -29,7 +29,7 @@ type ChatState = {
     deleteSession: (sessionId: string) => Promise<void>
 
     fetchMessages: (sessionId: string) => Promise<void>
-    sendMessage: (userId: string, content: string) => Promise<void>
+    sendMessage: (userId: string, content: string, language?: string) => Promise<void>
     clearCurrentSession: () => void
 }
 
@@ -104,7 +104,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
         set({ loading: false })
     },
 
-    sendMessage: async (userId: string, content: string) => {
+    sendMessage: async (userId: string, content: string, language: string = 'en') => {
         let sessionId = get().currentSessionId
 
         // Auto-create session if none exists
@@ -142,7 +142,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
                 }))
             ]
 
-            const aiResponse = await getAIResponse(content, history)
+            const aiResponse = await getAIResponse(content, history, language)
 
             const assistantMessage: Message = {
                 id: Math.random().toString(),
