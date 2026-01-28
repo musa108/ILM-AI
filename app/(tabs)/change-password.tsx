@@ -29,7 +29,7 @@ export default function ChangePassword() {
                 password: newPassword,
             })
             if (error) throw error
-            Alert.alert('Success', 'Your password has been updated!', [{ text: 'OK', onPress: () => router.replace('/(tabs)/profile') }])
+            Alert.alert('Success', 'Your password has been updated! You can now continue using the app.', [{ text: 'OK', onPress: () => router.replace('/(tabs)') }])
         } catch (error: any) {
             Alert.alert('Error', error.message)
         } finally {

@@ -29,8 +29,8 @@ export default function ForgotPassword() {
             if (error) throw error
             setSent(true)
             Alert.alert(
-                'Email Sent',
-                'Please check your inbox for a password reset link.',
+                'Link Sent!',
+                'We have sent a secure password reset link to your email. Please check your inbox.',
                 [{ text: 'OK', onPress: () => router.replace('/login') }]
             )
         } catch (error: any) {

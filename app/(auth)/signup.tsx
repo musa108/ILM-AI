@@ -39,20 +39,16 @@ export default function Signup() {
 
             if (error) throw error
 
-            if (session) {
-                router.replace('/(tabs)')
-            } else {
-                Alert.alert(
-                    'Verification Required',
-                    'Please check your inbox for email verification!',
-                    [
-                        {
-                            text: 'OK',
-                            onPress: () => router.replace('/login')
-                        }
-                    ]
-                )
-            }
+            Alert.alert(
+                'Success!',
+                'Account created successfully. Please check your email for verification and then sign in.',
+                [
+                    {
+                        text: 'OK',
+                        onPress: () => router.replace('/login')
+                    }
+                ]
+            )
         } catch (error: any) {
             Alert.alert('Error', error.message)
         } finally {
