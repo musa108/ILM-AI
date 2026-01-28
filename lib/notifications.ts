@@ -23,37 +23,21 @@ if (Platform.OS !== 'web') {
     });
 }
 
-// We can't use hooks like useAudioPlayer outside of components easily,
-// but expo-audio has an imperative API as well.
-import { createAudioPlayer } from 'expo-audio';
-
-let player: any = null;
-
+// Vibration only for now since expo-audio is removed.
 async function playAdhanAndVibrate() {
     try {
-        // Vibrate for 10 seconds (Haptics usually only vibrates for short bursts, 
-        // so we loop it or use simple Vibration from react-native for long ones)
+        // Vibrate for 10 seconds
         const vibrationInterval = setInterval(() => {
             Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         }, 1000);
 
-        // Play Adhan using expo-audio imperative API
-        player = createAudioPlayer(ADHAN_URL);
-        player.play();
-
         // Stop after 10 seconds
         setTimeout(async () => {
             clearInterval(vibrationInterval);
-            if (player) {
-                player.pause();
-                // Note: current expo-audio might not have unload, it's garbage collected, 
-                // but we should at least pause it.
-                player = null;
-            }
         }, 10000);
 
     } catch (error) {
-        console.log('Error playing Adhan:', error);
+        console.log('Error in vibration:', error);
     }
 }
 
