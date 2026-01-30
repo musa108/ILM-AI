@@ -52,42 +52,46 @@ const QUOTES = [
 ];
 
 export async function setupNotifications() {
-    if (Platform.OS === 'web') return;
+    try {
+        if (Platform.OS === 'web') return;
 
-    const { status: existingStatus } = await Notifications.getPermissionsAsync();
-    let finalStatus = existingStatus;
+        const { status: existingStatus } = await Notifications.getPermissionsAsync();
+        let finalStatus = existingStatus;
 
-    if (existingStatus !== 'granted') {
-        const { status } = await Notifications.requestPermissionsAsync();
-        finalStatus = status;
-    }
-
-    if (finalStatus !== 'granted') {
-        console.log('Permission not granted for notifications');
-        return;
-    }
-
-    if (Platform.OS === 'android') {
-        await Notifications.setNotificationChannelAsync('prayer-times', {
-            name: 'Prayer Times',
-            importance: Notifications.AndroidImportance.MAX,
-            vibrationPattern: [0, 250, 250, 250],
-            lightColor: '#FF231F7C',
-            sound: 'default', // Custom sound files for Android require integration in native assets
-        });
-    }
-
-    // Add listener for when notification is tapped (Background case)
-    Notifications.addNotificationResponseReceivedListener(response => {
-        const title = response.notification.request.content.title?.toLowerCase();
-        if (title?.includes('prayer')) {
-            playAdhanAndVibrate();
+        if (existingStatus !== 'granted') {
+            const { status } = await Notifications.requestPermissionsAsync();
+            finalStatus = status;
         }
-    });
 
-    await scheduleDailyQuote();
-    await scheduleFridaySermonReminder();
-    await schedulePrayerReminders();
+        if (finalStatus !== 'granted') {
+            console.log('Permission not granted for notifications');
+            return;
+        }
+
+        if (Platform.OS === 'android') {
+            await Notifications.setNotificationChannelAsync('prayer-times', {
+                name: 'Prayer Times',
+                importance: Notifications.AndroidImportance.MAX,
+                vibrationPattern: [0, 250, 250, 250],
+                lightColor: '#FF231F7C',
+                sound: 'default',
+            });
+        }
+
+        // Add listener for when notification is tapped
+        Notifications.addNotificationResponseReceivedListener(response => {
+            const title = response.notification.request.content.title?.toLowerCase();
+            if (title?.includes('prayer')) {
+                playAdhanAndVibrate();
+            }
+        });
+
+        await scheduleDailyQuote();
+        await scheduleFridaySermonReminder();
+        await schedulePrayerReminders();
+    } catch (error) {
+        console.error('Error setting up notifications:', error);
+    }
 }
 
 async function scheduleDailyQuote() {

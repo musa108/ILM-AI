@@ -5,8 +5,9 @@ import 'react-native-url-polyfill/auto';
 
 import Constants from 'expo-constants';
 
-const supabaseUrl = Constants.expoConfig?.extra?.supabaseUrl!
-const supabaseAnonKey = Constants.expoConfig?.extra?.supabaseAnonKey!
+const config = Constants.expoConfig?.extra || {};
+const supabaseUrl = config.supabaseUrl || '';
+const supabaseAnonKey = config.supabaseAnonKey || '';
 
 // SSR-safe storage handling
 const isWeb = Platform.OS === 'web';
@@ -19,7 +20,11 @@ const storageShim = {
   removeItem: (key: string) => (isServer ? Promise.resolve() : AsyncStorage.removeItem(key)),
 };
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+// Final guard to prevent crash on startup if environment variables are missing
+const finalSupabaseUrl = supabaseUrl || 'https://placeholder-url-if-missing.supabase.co';
+const finalSupabaseAnonKey = supabaseAnonKey || 'placeholder-key-if-missing';
+
+export const supabase = createClient(finalSupabaseUrl, finalSupabaseAnonKey, {
   auth: {
     storage: storageShim as any,
     autoRefreshToken: true,

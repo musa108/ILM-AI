@@ -56,17 +56,6 @@ function InitialLayout() {
     const inAuthGroup = segments[0] === '(auth)';
     const isOnboarding = (segments[0] as string) === 'onboarding';
 
-    // Handle Password Recovery & Signup Verification redirection
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event: any) => {
-      console.log('Auth event change:', event);
-      if (event === 'PASSWORD_RECOVERY') {
-        router.replace('/(tabs)/change-password');
-      } else if (event === 'SIGNED_IN') {
-        // This handles cases where user registers and clicks the link in email
-        router.replace('/(tabs)');
-      }
-    });
-
     if (!user) {
       if (!inAuthGroup && !isOnboarding) {
         router.replace('/onboarding' as any);
@@ -74,11 +63,29 @@ function InitialLayout() {
     } else if (user && (inAuthGroup || isOnboarding)) {
       router.replace('/(tabs)' as any);
     }
+  }, [user, loading, loaded, segments]);
+
+  // Handle Password Recovery & Signup Verification redirection
+  useEffect(() => {
+    let authListener: any = null;
+    try {
+      const { data } = supabase.auth.onAuthStateChange((event: any) => {
+        console.log('Auth event change:', event);
+        if (event === 'PASSWORD_RECOVERY') {
+          router.replace('/(tabs)/change-password');
+        } else if (event === 'SIGNED_IN') {
+          router.replace('/(tabs)');
+        }
+      });
+      authListener = data?.subscription;
+    } catch (e) {
+      console.error("Layout auth listener error:", e);
+    }
 
     return () => {
-      subscription.unsubscribe();
+      if (authListener) authListener.unsubscribe();
     }
-  }, [user, loading, loaded, segments]);
+  }, [router]);
 
   if (!loaded || loading) {
     return null;

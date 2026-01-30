@@ -1,6 +1,7 @@
 export default {
     expo: {
         name: "ILM AI",
+        owner: "nmanagi22s-organization",
         slug: "ilm-ai",
         version: "1.0.0",
         orientation: "portrait",
@@ -24,8 +25,14 @@ export default {
                 foregroundImage: "./assets/icon.png",
                 backgroundColor: "#0d5f5f"
             },
-            edgeToEdgeEnabled: true,
-            predictiveBackGestureEnabled: false,
+            permissions: [
+                "ACCESS_COARSE_LOCATION",
+                "ACCESS_FINE_LOCATION",
+                "FOREGROUND_SERVICE",
+                "RECEIVE_BOOT_COMPLETED",
+                "VIBRATE"
+            ],
+            edgeToEdgeEnabled: false,
             package: "com.nmanagi22sorganization.ilmai"
         },
         web: {
@@ -36,13 +43,16 @@ export default {
         plugins: [
             "expo-router",
             "expo-font",
+            "expo-location",
+            "expo-secure-store",
             [
                 "expo-notifications",
                 {
                     "icon": "./assets/icon.png",
                     "color": "#0d5f5f"
                 }
-            ]
+            ],
+            "expo-build-properties"
         ],
         extra: {
             router: {},
@@ -54,7 +64,6 @@ export default {
             geminiApiKey: process.env.EXPO_PUBLIC_GEMINI_API_KEY,
             huggingfaceApiKey: process.env.EXPO_PUBLIC_HUGGINGFACE_API_KEY,
             groqApiKey: process.env.EXPO_PUBLIC_GROQ_API_KEY
-        },
-        owner: "nmanagi22s-organization"
+        }
     }
 };
