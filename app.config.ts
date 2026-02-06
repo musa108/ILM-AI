@@ -26,6 +26,7 @@ export default {
                 backgroundColor: "#0d5f5f"
             },
             permissions: [
+                "INTERNET",
                 "ACCESS_COARSE_LOCATION",
                 "ACCESS_FINE_LOCATION",
                 "FOREGROUND_SERVICE",
@@ -52,7 +53,14 @@ export default {
                     "color": "#0d5f5f"
                 }
             ],
-            "expo-build-properties"
+            [
+                "expo-build-properties",
+                {
+                    "android": {
+                        "kotlinVersion": "2.0.21"
+                    }
+                }
+            ]
         ],
         extra: {
             router: {},
