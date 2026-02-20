@@ -3,12 +3,12 @@ import Colors from '@/constants/Colors';
 import { useLanguage } from '@/context/LanguageContext';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Audio } from 'expo-av';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Countdown } from '../../components/Ramadan/Countdown';
 import { DuaCard } from '../../components/Ramadan/DuaCard';
-import { ZakatCalculator } from '../../components/Ramadan/ZakatCalculator';
 import { useRamadanTimes } from '../../hooks/useRamadanTimes';
 
 interface DailyGoals {
@@ -20,6 +20,8 @@ interface DailyGoals {
 export default function RamadanDashboard() {
     const { iftar, suhoor, nextPrayer, nextPrayerTime, loading, error, ...prayerTimes } = useRamadanTimes();
     const [goals, setGoals] = useState<DailyGoals>({ fasting: false, taraweeh: false, quranPages: 0 });
+    const [activeSurah, setActiveSurah] = useState<number | null>(null);
+    const [sound, setSound] = useState<Audio.Sound | null>(null);
     const { t } = useLanguage();
     const colorScheme = useColorScheme() ?? 'light';
     const currentColors = Colors[colorScheme as keyof typeof Colors];
@@ -34,6 +36,43 @@ export default function RamadanDashboard() {
         };
         loadGoals();
     }, []);
+
+    useEffect(() => {
+        return sound
+            ? () => {
+                sound.unloadAsync();
+            }
+            : undefined;
+    }, [sound]);
+
+    const playSurah = async (surah: { id: number; url: string }) => {
+        try {
+            if (activeSurah === surah.id) {
+                await sound?.pauseAsync();
+                setActiveSurah(null);
+                return;
+            }
+
+            if (sound) {
+                await sound.unloadAsync();
+            }
+
+            const { sound: newSound } = await Audio.Sound.createAsync(
+                { uri: surah.url },
+                { shouldPlay: true }
+            );
+            setSound(newSound);
+            setActiveSurah(surah.id);
+
+            newSound.setOnPlaybackStatusUpdate((status) => {
+                if (status.isLoaded && status.didJustFinish) {
+                    setActiveSurah(null);
+                }
+            });
+        } catch (error) {
+            console.error('Error playing surah:', error);
+        }
+    };
 
     const updateGoal = async (newGoals: Partial<DailyGoals>) => {
         const updated = { ...goals, ...newGoals };
@@ -53,14 +92,12 @@ export default function RamadanDashboard() {
     const nextEvent = nextPrayerTime;
     const nextLabel = `Countdown to ${nextPrayer}`;
 
-    if (!prayerTimes.fajr) return <View style={styles.loadingContainer}><ActivityIndicator size="large" color={currentColors.tint} /></View>;
-
-    const prayerList = [
-        { name: 'Fajr', time: prayerTimes.fajr },
-        { name: 'Dhuhr', time: prayerTimes.dhuhr },
-        { name: 'Asr', time: prayerTimes.asr },
-        { name: 'Maghrib', time: prayerTimes.maghrib },
-        { name: 'Isha', time: prayerTimes.isha },
+    const surahs = [
+        { id: 1, name: "Al-Fatihah", reader: "Mishary Rashid Alafasy", url: "https://download.quranicaudio.com/qdc/mishari_rashid_al_afasy/murattal/1.mp3" },
+        { id: 36, name: "Ya-Sin", reader: "Mishary Rashid Alafasy", url: "https://download.quranicaudio.com/qdc/mishari_rashid_al_afasy/murattal/36.mp3" },
+        { id: 55, name: "Ar-Rahman", reader: "Mishary Rashid Alafasy", url: "https://download.quranicaudio.com/qdc/mishari_rashid_al_afasy/murattal/55.mp3" },
+        { id: 67, name: "Al-Mulk", reader: "Mishary Rashid Alafasy", url: "https://download.quranicaudio.com/qdc/mishari_rashid_al_afasy/murattal/67.mp3" },
+        { id: 18, name: "Al-Kahf", reader: "Mishary Rashid Alafasy", url: "https://download.quranicaudio.com/qdc/mishari_rashid_al_afasy/murattal/18.mp3" },
     ];
 
     const formatTime = (date: Date) => {
@@ -79,18 +116,29 @@ export default function RamadanDashboard() {
 
                 <View style={styles.content}>
                     <View style={styles.section}>
-                        <Text style={[styles.sectionTitle, { color: currentColors.text }]}>Today's Prayer Times</Text>
+                        <Text style={[styles.sectionTitle, { color: currentColors.text }]}>Listen to Quran</Text>
                         <View style={[styles.card, { backgroundColor: currentColors.secondary }]}>
-                            {prayerList.map((prayer) => (
-                                <View key={prayer.name} style={styles.prayerRow}>
-                                    <Text style={[styles.prayerName, { color: currentColors.text }]}>{prayer.name}</Text>
-                                    <View style={styles.prayerTimeContainer}>
-                                        <Ionicons name="time-outline" size={16} color={currentColors.tint} />
-                                        <Text style={[styles.prayerTime, { color: currentColors.tint }]}>
-                                            {formatTime(prayer.time!)}
-                                        </Text>
+                            {surahs.map((surah) => (
+                                <TouchableOpacity
+                                    key={surah.id}
+                                    style={styles.surahRow}
+                                    onPress={() => playSurah(surah)}
+                                >
+                                    <View style={styles.surahInfo}>
+                                        <View style={[styles.surahNumber, { backgroundColor: currentColors.tint + '20' }]}>
+                                            <Text style={{ color: currentColors.tint, fontWeight: 'bold' }}>{surah.id}</Text>
+                                        </View>
+                                        <View>
+                                            <Text style={[styles.surahName, { color: currentColors.text }]}>{surah.name}</Text>
+                                            <Text style={[styles.readerName, { color: currentColors.text + '80' }]}>{surah.reader}</Text>
+                                        </View>
                                     </View>
-                                </View>
+                                    <Ionicons
+                                        name={activeSurah === surah.id ? "pause-circle" : "play-circle"}
+                                        size={32}
+                                        color={currentColors.tint}
+                                    />
+                                </TouchableOpacity>
                             ))}
                         </View>
                     </View>
@@ -130,7 +178,6 @@ export default function RamadanDashboard() {
                     </View>
 
                     <View style={styles.section}>
-                        <ZakatCalculator />
                     </View>
 
                     <View style={styles.section}>
@@ -202,7 +249,7 @@ const styles = StyleSheet.create({
         shadowRadius: 10,
         elevation: 2,
     },
-    prayerRow: {
+    surahRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
@@ -210,18 +257,24 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderBottomColor: 'rgba(0,0,0,0.03)',
     },
-    prayerName: {
-        fontSize: 16,
-        fontWeight: '600',
-    },
-    prayerTimeContainer: {
+    surahInfo: {
         flexDirection: 'row',
         alignItems: 'center',
     },
-    prayerTime: {
+    surahNumber: {
+        width: 36,
+        height: 36,
+        borderRadius: 18,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 12,
+    },
+    surahName: {
         fontSize: 16,
-        fontWeight: '700',
-        marginLeft: 6,
+        fontWeight: '600',
+    },
+    readerName: {
+        fontSize: 12,
     },
     checkItem: {
         flexDirection: 'row',

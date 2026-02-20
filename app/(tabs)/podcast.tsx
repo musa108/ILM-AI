@@ -75,11 +75,54 @@ export default function Podcast() {
         }
     }
 
-    const speak = (text: string) => {
+    const getBestVoice = async (lang: string) => {
+        try {
+            const voices = await Speech.getAvailableVoicesAsync()
+            // Map common codes to regional ones for better picking
+            const localeMap: Record<string, string> = {
+                'en': 'en-US',
+                'yo': 'yo-NG',
+                'ha': 'ha-NG',
+                'ar': 'ar-SA'
+            }
+            const targetLocale = localeMap[lang] || lang
+
+            // Prioritize: 
+            // 1. Exact locale match + 'enhanced' or 'premium' or 'google' (high quality)
+            // 2. Exact locale match
+            // 3. Language match (e.g. 'yo')
+
+            const filteredVoices = voices.filter(v => v.language.toLowerCase().includes(lang.toLowerCase()))
+
+            if (filteredVoices.length === 0) return null
+
+            const premiumVoice = filteredVoices.find(v =>
+                v.quality === Speech.VoiceQuality.Enhanced ||
+                v.name.toLowerCase().includes('premium') ||
+                v.name.toLowerCase().includes('google')
+            )
+
+            return premiumVoice?.identifier || filteredVoices[0].identifier
+        } catch (e) {
+            return null
+        }
+    }
+
+    const speak = async (text: string) => {
         console.log('Podcast: Attempting to speak text of length:', text.length)
         setIsPlaying(true)
+
+        const voiceIdentifier = await getBestVoice(language)
+        const localeMap: Record<string, string> = {
+            'en': 'en-US',
+            'yo': 'yo-NG',
+            'ha': 'ha-NG',
+            'ar': 'ar-SA'
+        }
+
         Speech.speak(text, {
-            language: language,
+            language: localeMap[language] || language,
+            voice: voiceIdentifier || undefined,
             pitch: 1.0,
             rate: 0.9,
             onStart: () => {

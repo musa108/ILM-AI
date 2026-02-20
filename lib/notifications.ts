@@ -1,10 +1,12 @@
 import { CalculationMethod, Coordinates, PrayerTimes } from 'adhan';
+import { Audio } from 'expo-av';
 import * as Haptics from 'expo-haptics';
 import * as Location from 'expo-location';
 import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
 
 const ADHAN_URL = 'https://archive.org/download/adhan-arabb-world/adhan.mp3';
+let adhanSound: Audio.Sound | null = null;
 
 Notifications.setNotificationHandler({
     handleNotification: async (notification) => {
@@ -23,7 +25,6 @@ Notifications.setNotificationHandler({
     },
 });
 
-// Vibration only for now since expo-audio is removed.
 async function playAdhanAndVibrate() {
     try {
         if (Platform.OS === 'web') {
@@ -32,6 +33,17 @@ async function playAdhanAndVibrate() {
             }
             return;
         }
+
+        // Play Adhan Sound
+        if (adhanSound) {
+            await adhanSound.unloadAsync();
+        }
+        const { sound } = await Audio.Sound.createAsync(
+            { uri: ADHAN_URL },
+            { shouldPlay: true }
+        );
+        adhanSound = sound;
+
         // Vibrate for 10 seconds
         const vibrationInterval = setInterval(() => {
             Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
@@ -43,7 +55,7 @@ async function playAdhanAndVibrate() {
         }, 10000);
 
     } catch (error) {
-        console.log('Error in vibration:', error);
+        console.log('Error in Adhan/vibration:', error);
     }
 }
 
