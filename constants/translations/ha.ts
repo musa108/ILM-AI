@@ -1,7 +1,7 @@
 export const ha = {
     // Navigation
     tab_chat: "Hira",
-    tab_quiz: "Jarrabawa",
+
     tab_prayer: "Sallah",
     tab_podcast: "Kwasfan Fayil",
     tab_profile: "Bayani",
@@ -19,14 +19,7 @@ export const ha = {
     chat_history: "Tarihin Hira",
 
     // Quiz
-    quiz_title: "Gwajin Ilimi",
-    quiz_score: "Makin ku",
-    quiz_start: "Fara Sabon Gwaji",
-    quiz_question_count: "Tambaya",
-    quiz_of: "cikin",
-    quiz_complete: "An kammala gwajin",
-    quiz_mashaallah: "MashaAllah!",
-    quiz_try_again: "Sake Gwada",
+
 
     // Prayer
     prayer_next: "Sallah ta Gaba",

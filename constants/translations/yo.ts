@@ -1,7 +1,7 @@
 export const yo = {
     // Navigation
     tab_chat: "Iwiregbe",
-    tab_quiz: "Idanwo",
+
     tab_prayer: "Adura",
     tab_podcast: "Adarọ-ese",
     tab_profile: "Profaili",
@@ -19,14 +19,7 @@ export const yo = {
     chat_history: "Itan Iwiregbe",
 
     // Quiz
-    quiz_title: "Idanwo Imọ",
-    quiz_score: "Abajade rẹ",
-    quiz_start: "Bẹrẹ Idanwo Tuntun",
-    quiz_question_count: "Ibeere",
-    quiz_of: "ninu",
-    quiz_complete: "Idanwo ti pari",
-    quiz_mashaallah: "MashaAllah!",
-    quiz_try_again: "Gbiyanju lẹẹkansi",
+
 
     // Prayer
     prayer_next: "Irun t’o kàn",

@@ -1,7 +1,7 @@
 export const en = {
     // Navigation
     tab_chat: "Chat",
-    tab_quiz: "Quiz",
+
     tab_prayer: "Prayer",
     tab_podcast: "Podcast",
     tab_profile: "Profile",
@@ -18,15 +18,7 @@ export const en = {
     chat_new_chat: "New Chat",
     chat_history: "Chat History",
 
-    // Quiz
-    quiz_title: "Knowledge Test",
-    quiz_score: "Your Score",
-    quiz_start: "Start New Quiz",
-    quiz_question_count: "Question",
-    quiz_of: "of",
-    quiz_complete: "Quiz Complete",
-    quiz_mashaallah: "MashaAllah!",
-    quiz_try_again: "Try Again",
+
 
     // Prayer
     prayer_next: "Next Prayer",
@@ -46,4 +38,5 @@ export const en = {
     profile_account: "Account",
     profile_logout: "Log Out",
     profile_theme: "Theme",
+    ramadan: "Ramadan",
 };

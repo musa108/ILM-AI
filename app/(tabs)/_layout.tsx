@@ -1,4 +1,4 @@
-import { FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons';
+import { FontAwesome5 } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
 import React from 'react';
 
@@ -32,13 +32,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color }: { color: string }) => <FontAwesome5 name="comment-alt" size={20} color={color} />,
         }}
       />
-      <Tabs.Screen
-        name="quiz"
-        options={{
-          title: t('tab_quiz'),
-          tabBarIcon: ({ color }: { color: string }) => <MaterialCommunityIcons name="brain" size={24} color={color} />,
-        }}
-      />
+
       <Tabs.Screen
         name="prayer"
         options={{

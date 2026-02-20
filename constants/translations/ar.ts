@@ -1,7 +1,7 @@
 export const ar = {
     // Navigation
     tab_chat: "محادثة",
-    tab_quiz: "مسابقة",
+
     tab_prayer: "الصلاة",
     tab_podcast: "بودكاست",
     tab_profile: "الملف الشخصي",
@@ -19,14 +19,7 @@ export const ar = {
     chat_history: "سجل المحادثات",
 
     // Quiz
-    quiz_title: "اختبار المعرفة",
-    quiz_score: "نتيجتك",
-    quiz_start: "ابدأ اختباراً جديداً",
-    quiz_question_count: "سؤال",
-    quiz_of: "من",
-    quiz_complete: "اكتمل الاختبار",
-    quiz_mashaallah: "ما شاء الله!",
-    quiz_try_again: "حاول مرة أخرى",
+
 
     // Prayer
     prayer_next: "الصلاة القادمة",

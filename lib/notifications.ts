@@ -1,31 +1,37 @@
+import { CalculationMethod, Coordinates, PrayerTimes } from 'adhan';
 import * as Haptics from 'expo-haptics';
+import * as Location from 'expo-location';
 import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
 
 const ADHAN_URL = 'https://archive.org/download/adhan-arabb-world/adhan.mp3';
 
-if (Platform.OS !== 'web') {
-    Notifications.setNotificationHandler({
-        handleNotification: async (notification) => {
-            // Check if it's a prayer notification
-            const isPrayer = notification.request.content.title?.toLowerCase().includes('prayer');
-            if (isPrayer) {
-                playAdhanAndVibrate();
-            }
-            return {
-                shouldShowAlert: true,
-                shouldPlaySound: true,
-                shouldSetBadge: false,
-                shouldShowBanner: true,
-                shouldShowList: true,
-            };
-        },
-    });
-}
+Notifications.setNotificationHandler({
+    handleNotification: async (notification) => {
+        // Check if it's a prayer notification
+        const isPrayer = notification.request.content.title?.toLowerCase().includes('prayer');
+        if (isPrayer) {
+            playAdhanAndVibrate();
+        }
+        return {
+            shouldShowAlert: true,
+            shouldPlaySound: true,
+            shouldSetBadge: false,
+            shouldShowBanner: true,
+            shouldShowList: true,
+        };
+    },
+});
 
 // Vibration only for now since expo-audio is removed.
 async function playAdhanAndVibrate() {
     try {
+        if (Platform.OS === 'web') {
+            if ('vibrate' in navigator) {
+                navigator.vibrate([1000, 500, 1000, 500, 1000]);
+            }
+            return;
+        }
         // Vibrate for 10 seconds
         const vibrationInterval = setInterval(() => {
             Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
@@ -53,8 +59,6 @@ const QUOTES = [
 
 export async function setupNotifications() {
     try {
-        if (Platform.OS === 'web') return;
-
         const { status: existingStatus } = await Notifications.getPermissionsAsync();
         let finalStatus = existingStatus;
 
@@ -88,7 +92,19 @@ export async function setupNotifications() {
 
         await scheduleDailyQuote();
         await scheduleFridaySermonReminder();
-        await schedulePrayerReminders();
+
+        // Get location for prayer times
+        let location = null;
+        try {
+            const { status: locStatus } = await Location.requestForegroundPermissionsAsync();
+            if (locStatus === 'granted') {
+                location = await Location.getCurrentPositionAsync({});
+            }
+        } catch (e) {
+            console.log('Error getting location for prayer times, falling back to defaults');
+        }
+
+        await schedulePrayerReminders(location?.coords);
     } catch (error) {
         console.error('Error setting up notifications:', error);
     }
@@ -127,16 +143,24 @@ async function scheduleFridaySermonReminder() {
     });
 }
 
-async function schedulePrayerReminders() {
+async function schedulePrayerReminders(coords?: { latitude: number, longitude: number }) {
     // Cancel existing to avoid duplicates
     await Notifications.cancelAllScheduledNotificationsAsync();
 
+    let prayerTimes: any;
+
+    if (coords) {
+        const coordinates = new Coordinates(coords.latitude, coords.longitude);
+        const params = CalculationMethod.MuslimWorldLeague();
+        prayerTimes = new PrayerTimes(coordinates, new Date(), params);
+    }
+
     const prayers = [
-        { name: 'Fajr', hour: 5, minute: 0 },
-        { name: 'Dhuhr', hour: 13, minute: 0 },
-        { name: 'Asr', hour: 16, minute: 30 },
-        { name: 'Maghrib', hour: 18, minute: 45 },
-        { name: 'Isha', hour: 20, minute: 0 },
+        { name: 'Fajr', hour: prayerTimes?.fajr.getHours() ?? 5, minute: prayerTimes?.fajr.getMinutes() ?? 0 },
+        { name: 'Dhuhr', hour: prayerTimes?.dhuhr.getHours() ?? 13, minute: prayerTimes?.dhuhr.getMinutes() ?? 0 },
+        { name: 'Asr', hour: prayerTimes?.asr.getHours() ?? 16, minute: prayerTimes?.asr.getMinutes() ?? 30 },
+        { name: 'Maghrib', hour: prayerTimes?.maghrib.getHours() ?? 18, minute: prayerTimes?.maghrib.getMinutes() ?? 45 },
+        { name: 'Isha', hour: prayerTimes?.isha.getHours() ?? 20, minute: prayerTimes?.isha.getMinutes() ?? 0 },
     ]
 
     for (const prayer of prayers) {

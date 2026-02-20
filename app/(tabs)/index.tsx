@@ -6,6 +6,7 @@ import { useLanguage } from '@/context/LanguageContext'
 import { useChatStore } from '@/store/chatStore'
 import { FontAwesome5 } from '@expo/vector-icons'
 import { LinearGradient } from 'expo-linear-gradient'
+import { useRouter } from 'expo-router'
 import React, { useEffect, useRef, useState } from 'react'
 import { ActivityIndicator, FlatList, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import Animated, { FadeInLeft, FadeInRight } from 'react-native-reanimated'
@@ -14,6 +15,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 // ... other imports
 
 export default function Chat() {
+  const router = useRouter()
   const [inputText, setInputText] = useState('')
   const [historyVisible, setHistoryVisible] = useState(false)
 
@@ -101,9 +103,14 @@ export default function Chat() {
           <Text style={[styles.headerTitle, { color: currentColors.text }]}>ILM AI</Text>
           <Text style={[styles.headerSubtitle, { color: currentColors.text + '80' }]}>Your Islamic Assistant</Text>
         </View>
-        <TouchableOpacity onPress={() => setHistoryVisible(true)} style={styles.iconButton}>
-          <FontAwesome5 name="history" size={18} color={currentColors.text} />
-        </TouchableOpacity>
+        <View style={{ flexDirection: 'row' }}>
+          <TouchableOpacity onPress={() => router.push('/ramadan' as any)} style={[styles.iconButton, { marginRight: 10 }]}>
+            <FontAwesome5 name="moon" size={18} color="#f1c40f" />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => setHistoryVisible(true)} style={styles.iconButton}>
+            <FontAwesome5 name="history" size={18} color={currentColors.text} />
+          </TouchableOpacity>
+        </View>
       </View>
 
       <ChatHistory
