@@ -22,6 +22,7 @@ export default function RamadanDashboard() {
     const [goals, setGoals] = useState<DailyGoals>({ fasting: false, taraweeh: false, quranPages: 0 });
     const [activeSurah, setActiveSurah] = useState<number | null>(null);
     const [sound, setSound] = useState<Audio.Sound | null>(null);
+    const [randomizedSurahs, setRandomizedSurahs] = useState<typeof surahs>([]);
     const { t } = useLanguage();
     const colorScheme = useColorScheme() ?? 'light';
     const currentColors = Colors[colorScheme as keyof typeof Colors];
@@ -34,7 +35,25 @@ export default function RamadanDashboard() {
                 setGoals(JSON.parse(saved));
             }
         };
+
+        const initAudio = async () => {
+            try {
+                await Audio.setAudioModeAsync({
+                    playsInSilentModeIOS: true,
+                    staysActiveInBackground: true,
+                    shouldDuckAndroid: true,
+                });
+            } catch (e) {
+                console.error('Error setting audio mode:', e);
+            }
+        };
+
         loadGoals();
+        initAudio();
+
+        // Randomize surahs on mount
+        const shuffled = [...surahs].sort(() => 0.5 - Math.random());
+        setRandomizedSurahs(shuffled);
     }, []);
 
     useEffect(() => {
@@ -47,10 +66,17 @@ export default function RamadanDashboard() {
 
     const playSurah = async (surah: { id: number; url: string }) => {
         try {
+            console.log('Ramadan: Attempting to play surah:', surah.id, surah.url);
+
             if (activeSurah === surah.id) {
-                await sound?.pauseAsync();
-                setActiveSurah(null);
-                return;
+                if (sound) {
+                    const status = await sound.getStatusAsync();
+                    if (status.isLoaded && status.isPlaying) {
+                        await sound.pauseAsync();
+                        setActiveSurah(null);
+                        return;
+                    }
+                }
             }
 
             if (sound) {
@@ -59,18 +85,19 @@ export default function RamadanDashboard() {
 
             const { sound: newSound } = await Audio.Sound.createAsync(
                 { uri: surah.url },
-                { shouldPlay: true }
+                { shouldPlay: true },
+                (status) => {
+                    if (status.isLoaded && status.didJustFinish) {
+                        setActiveSurah(null);
+                    }
+                }
             );
+
             setSound(newSound);
             setActiveSurah(surah.id);
-
-            newSound.setOnPlaybackStatusUpdate((status) => {
-                if (status.isLoaded && status.didJustFinish) {
-                    setActiveSurah(null);
-                }
-            });
         } catch (error) {
             console.error('Error playing surah:', error);
+            setActiveSurah(null);
         }
     };
 
@@ -118,7 +145,7 @@ export default function RamadanDashboard() {
                     <View style={styles.section}>
                         <Text style={[styles.sectionTitle, { color: currentColors.text }]}>Listen to Quran</Text>
                         <View style={[styles.card, { backgroundColor: currentColors.secondary }]}>
-                            {surahs.map((surah) => (
+                            {randomizedSurahs.map((surah) => (
                                 <TouchableOpacity
                                     key={surah.id}
                                     style={styles.surahRow}
