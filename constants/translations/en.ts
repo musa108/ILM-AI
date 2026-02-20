@@ -1,7 +1,7 @@
 export const en = {
     // Navigation
     tab_chat: "Chat",
-
+    tab_ramadan: "Ramadan",
     tab_prayer: "Prayer",
     tab_podcast: "Podcast",
     tab_profile: "Profile",

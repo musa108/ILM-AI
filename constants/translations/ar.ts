@@ -1,7 +1,7 @@
 export const ar = {
     // Navigation
     tab_chat: "محادثة",
-
+    tab_ramadan: "رمضان",
     tab_prayer: "الصلاة",
     tab_podcast: "بودكاست",
     tab_profile: "الملف الشخصي",

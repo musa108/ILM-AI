@@ -1,7 +1,7 @@
 export const yo = {
     // Navigation
     tab_chat: "Iwiregbe",
-
+    tab_ramadan: "Ramadã",
     tab_prayer: "Adura",
     tab_podcast: "Adarọ-ese",
     tab_profile: "Profaili",

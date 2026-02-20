@@ -32,6 +32,13 @@ export default function TabLayout() {
           tabBarIcon: ({ color }: { color: string }) => <FontAwesome5 name="comment-alt" size={20} color={color} />,
         }}
       />
+      <Tabs.Screen
+        name="ramadan"
+        options={{
+          title: t('tab_ramadan') || 'Ramadan',
+          tabBarIcon: ({ color }: { color: string }) => <FontAwesome5 name="moon" size={18} color={color} />,
+        }}
+      />
 
       <Tabs.Screen
         name="prayer"

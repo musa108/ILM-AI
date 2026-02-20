@@ -103,14 +103,9 @@ export default function Chat() {
           <Text style={[styles.headerTitle, { color: currentColors.text }]}>ILM AI</Text>
           <Text style={[styles.headerSubtitle, { color: currentColors.text + '80' }]}>Your Islamic Assistant</Text>
         </View>
-        <View style={{ flexDirection: 'row' }}>
-          <TouchableOpacity onPress={() => router.push('/ramadan' as any)} style={[styles.iconButton, { marginRight: 10 }]}>
-            <FontAwesome5 name="moon" size={18} color="#f1c40f" />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => setHistoryVisible(true)} style={styles.iconButton}>
-            <FontAwesome5 name="history" size={18} color={currentColors.text} />
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity onPress={() => setHistoryVisible(true)} style={styles.iconButton}>
+          <FontAwesome5 name="history" size={18} color={currentColors.text} />
+        </TouchableOpacity>
       </View>
 
       <ChatHistory
