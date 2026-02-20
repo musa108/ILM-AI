@@ -21,11 +21,6 @@ export default function Podcast() {
     const colorScheme = useColorScheme() ?? 'light'
     const currentColors = Colors[colorScheme as keyof typeof Colors]
 
-    React.useEffect(() => {
-        generateTopics()
-        checkVoices()
-    }, [])
-
     const checkVoices = async () => {
         try {
             const voices = await Speech.getAvailableVoicesAsync()
@@ -52,6 +47,11 @@ export default function Podcast() {
             setTopicsLoading(false)
         }
     }
+
+    React.useEffect(() => {
+        generateTopics()
+        checkVoices()
+    }, [])
 
     const generatePodcast = async (selectedTopic: string) => {
         setLoading(true)

@@ -17,6 +17,14 @@ interface DailyGoals {
     quranPages: number;
 }
 
+const surahs = [
+    { id: 1, name: "Al-Fatihah", reader: "Mishary Rashid Alafasy", url: "https://download.quranicaudio.com/qdc/mishari_rashid_al_afasy/murattal/1.mp3" },
+    { id: 36, name: "Ya-Sin", reader: "Mishary Rashid Alafasy", url: "https://download.quranicaudio.com/qdc/mishari_rashid_al_afasy/murattal/36.mp3" },
+    { id: 55, name: "Ar-Rahman", reader: "Mishary Rashid Alafasy", url: "https://download.quranicaudio.com/qdc/mishari_rashid_al_afasy/murattal/55.mp3" },
+    { id: 67, name: "Al-Mulk", reader: "Mishary Rashid Alafasy", url: "https://download.quranicaudio.com/qdc/mishari_rashid_al_afasy/murattal/67.mp3" },
+    { id: 18, name: "Al-Kahf", reader: "Mishary Rashid Alafasy", url: "https://download.quranicaudio.com/qdc/mishari_rashid_al_afasy/murattal/18.mp3" },
+];
+
 export default function RamadanDashboard() {
     const { iftar, suhoor, nextPrayer, nextPrayerTime, loading, error, ...prayerTimes } = useRamadanTimes();
     const [goals, setGoals] = useState<DailyGoals>({ fasting: false, taraweeh: false, quranPages: 0 });
@@ -118,14 +126,6 @@ export default function RamadanDashboard() {
 
     const nextEvent = nextPrayerTime;
     const nextLabel = `Countdown to ${nextPrayer}`;
-
-    const surahs = [
-        { id: 1, name: "Al-Fatihah", reader: "Mishary Rashid Alafasy", url: "https://download.quranicaudio.com/qdc/mishari_rashid_al_afasy/murattal/1.mp3" },
-        { id: 36, name: "Ya-Sin", reader: "Mishary Rashid Alafasy", url: "https://download.quranicaudio.com/qdc/mishari_rashid_al_afasy/murattal/36.mp3" },
-        { id: 55, name: "Ar-Rahman", reader: "Mishary Rashid Alafasy", url: "https://download.quranicaudio.com/qdc/mishari_rashid_al_afasy/murattal/55.mp3" },
-        { id: 67, name: "Al-Mulk", reader: "Mishary Rashid Alafasy", url: "https://download.quranicaudio.com/qdc/mishari_rashid_al_afasy/murattal/67.mp3" },
-        { id: 18, name: "Al-Kahf", reader: "Mishary Rashid Alafasy", url: "https://download.quranicaudio.com/qdc/mishari_rashid_al_afasy/murattal/18.mp3" },
-    ];
 
     const formatTime = (date: Date) => {
         return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
