@@ -50,7 +50,8 @@ export default {
                 "expo-notifications",
                 {
                     "icon": "./assets/icon.png",
-                    "color": "#0d5f5f"
+                    "color": "#0d5f5f",
+                    "sounds": ["./assets/sounds/adhan.wav"]
                 }
             ],
             [

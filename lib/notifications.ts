@@ -90,7 +90,7 @@ export async function setupNotifications() {
                 importance: Notifications.AndroidImportance.MAX,
                 vibrationPattern: [0, 250, 250, 250],
                 lightColor: '#FF231F7C',
-                sound: 'default',
+                sound: 'adhan.wav',
             });
         }
 
@@ -131,7 +131,6 @@ async function scheduleDailyQuote() {
             body: randomQuote,
         },
         trigger: {
-            type: 'calendar',
             hour: 9,
             minute: 0,
             repeats: true,
@@ -146,7 +145,6 @@ async function scheduleFridaySermonReminder() {
             body: "Don't forget to listen to the Friday Reminder podcast!",
         },
         trigger: {
-            type: 'calendar',
             weekday: 6, // Friday
             hour: 10,
             minute: 0,
@@ -181,9 +179,9 @@ async function schedulePrayerReminders(coords?: { latitude: number, longitude: n
                 title: `${prayer.name} Prayer`,
                 body: "It's time for prayer. Come to success!",
                 data: { type: 'prayer' },
+                sound: 'adhan.wav',
             },
             trigger: {
-                type: 'calendar',
                 hour: prayer.hour,
                 minute: prayer.minute,
                 repeats: true,
