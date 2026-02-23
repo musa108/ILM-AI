@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
     padding: 14,
     borderRadius: 20,
     maxWidth: '80%',
-    boxShadow: '0px 2px 5px rgba(0, 0, 0, 0.05)',
+    shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 5,
     elevation: 2,
   },
   userBubble: {

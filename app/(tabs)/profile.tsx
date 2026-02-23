@@ -235,7 +235,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         marginBottom: 15,
-        boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.1)',
+        shadowColor: '#000', shadowOffset: { width: 0, height: 10 }, shadowOpacity: 0.1, shadowRadius: 20,
     },
     avatar: {
         width: 90,
@@ -271,7 +271,7 @@ const styles = StyleSheet.create({
         padding: 16,
         borderRadius: 20,
         marginBottom: 12,
-        boxShadow: '0px 2px 5px rgba(0, 0, 0, 0.05)',
+        shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 5,
         elevation: 2,
     },
     menuLeft: {
@@ -319,7 +319,7 @@ const styles = StyleSheet.create({
         width: '80%',
         borderRadius: 20,
         padding: 20,
-        boxShadow: '0px 10px 30px rgba(0,0,0,0.2)',
+        shadowColor: '#000', shadowOffset: { width: 0, height: 10 }, shadowOpacity: 0.2, shadowRadius: 30,
         elevation: 5,
     },
     modalTitle: {
