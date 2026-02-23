@@ -87,20 +87,20 @@ export default function SurahScreen() {
         }
 
         return (
-            <View style={[styles.ayahContainer, { borderBottomColor: currentColors.text + '20' }]}>
-                <View style={[styles.ayahHeader, { backgroundColor: currentColors.secondary }]}>
-                    <Text style={[styles.ayahNumber, { color: currentColors.tint }]}>{item.numberInSurah}</Text>
+            <View style={StyleSheet.flatten([])}>
+                <View style={StyleSheet.flatten([])}>
+                    <Text style={StyleSheet.flatten([])}>{item.numberInSurah}</Text>
                     <View style={styles.ayahActions}>
                         {/* Placeholder for future actions like play audio for specific ayah */}
                         <FontAwesome5 name="book-reader" size={14} color={currentColors.tint} />
                     </View>
                 </View>
 
-                <Text style={[styles.arabicText, { color: currentColors.text }]} >
+                <Text style={StyleSheet.flatten([])} >
                     {arabicText}
                 </Text>
 
-                <Text style={[styles.translationText, { color: currentColors.text + '90' }]}>
+                <Text style={StyleSheet.flatten([])}>
                     {item.translation}
                 </Text>
             </View>
@@ -112,18 +112,18 @@ export default function SurahScreen() {
 
         return (
             <View style={styles.headerContent}>
-                <Text style={[styles.surahNameArabic, { color: currentColors.tint }]}>{surah.name}</Text>
-                <Text style={[styles.surahNameEnglish, { color: currentColors.text }]}>{surah.englishName}</Text>
-                <Text style={[styles.surahTranslation, { color: currentColors.text + '80' }]}>{surah.englishNameTranslation}</Text>
+                <Text style={StyleSheet.flatten([])}>{surah.name}</Text>
+                <Text style={StyleSheet.flatten([])}>{surah.englishName}</Text>
+                <Text style={StyleSheet.flatten([])}>{surah.englishNameTranslation}</Text>
 
                 <View style={styles.surahMeta}>
-                    <Text style={[styles.metaText, { color: currentColors.text }]}>
+                    <Text style={StyleSheet.flatten([])}>
                         {surah.revelationType === 'Meccan' ? 'Mecca' : 'Medina'} • {surah.numberOfAyahs} Ayahs
                     </Text>
                 </View>
 
                 {surah.number !== 1 && surah.number !== 9 && (
-                    <Text style={[styles.bismillah, { color: currentColors.text }]} >
+                    <Text style={StyleSheet.flatten([])} >
                         بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ
                     </Text>
                 )}
@@ -133,7 +133,7 @@ export default function SurahScreen() {
 
     if (loading) {
         return (
-            <SafeAreaView style={[styles.container, styles.center, { backgroundColor: currentColors.background }]}>
+            <SafeAreaView style={StyleSheet.flatten([])}>
                 <ActivityIndicator size="large" color={currentColors.tint} />
             </SafeAreaView>
         );
@@ -141,9 +141,9 @@ export default function SurahScreen() {
 
     if (error) {
         return (
-            <SafeAreaView style={[styles.container, styles.center, { backgroundColor: currentColors.background }]}>
-                <Text style={[styles.errorText, { color: '#ff3b30' }]}>{error}</Text>
-                <TouchableOpacity style={[styles.retryButton, { backgroundColor: currentColors.tint }]} onPress={() => router.back()}>
+            <SafeAreaView style={StyleSheet.flatten([])}>
+                <Text style={StyleSheet.flatten([])}>{error}</Text>
+                <TouchableOpacity style={StyleSheet.flatten([])} onPress={() => router.back()}>
                     <Text style={styles.retryText}>Go Back</Text>
                 </TouchableOpacity>
             </SafeAreaView>
@@ -151,12 +151,12 @@ export default function SurahScreen() {
     }
 
     return (
-        <SafeAreaView style={[styles.container, { backgroundColor: currentColors.background }]}>
-            <View style={[styles.topBar, { backgroundColor: currentColors.background }]}>
+        <SafeAreaView style={StyleSheet.flatten([])}>
+            <View style={StyleSheet.flatten([])}>
                 <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
                     <FontAwesome5 name="arrow-left" size={20} color={currentColors.text} />
                 </TouchableOpacity>
-                <Text style={[styles.topBarTitle, { color: currentColors.text }]}>
+                <Text style={StyleSheet.flatten([])}>
                     {surah?.englishName || 'Loading...'}
                 </Text>
                 <View style={{ width: 40 }} /> {/* Spacer to center title */}

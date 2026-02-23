@@ -48,19 +48,19 @@ export default function QuranTab() {
 
     const renderSurah = ({ item }: { item: Surah }) => (
         <Link href={`/surah/${item.number}`} asChild>
-            <TouchableOpacity style={[styles.surahCard, { backgroundColor: currentColors.secondary }]}>
+            <TouchableOpacity style={StyleSheet.flatten([])}>
                 <View style={styles.surahHeader}>
-                    <View style={[styles.surahNumberCircle, { backgroundColor: currentColors.tint + '20' }]}>
-                        <Text style={[styles.surahNumberText, { color: currentColors.tint }]}>{item.number}</Text>
+                    <View style={StyleSheet.flatten([])}>
+                        <Text style={StyleSheet.flatten([])}>{item.number}</Text>
                     </View>
                     <View style={styles.surahNameContainer}>
-                        <Text style={[styles.englishName, { color: currentColors.text }]}>{item.englishName}</Text>
-                        <Text style={[styles.translationName, { color: currentColors.text + '80' }]}>{item.englishNameTranslation}</Text>
+                        <Text style={StyleSheet.flatten([])}>{item.englishName}</Text>
+                        <Text style={StyleSheet.flatten([])}>{item.englishNameTranslation}</Text>
                     </View>
-                    <Text style={[styles.arabicName, { color: currentColors.tint }]}>{item.name}</Text>
+                    <Text style={StyleSheet.flatten([])}>{item.name}</Text>
                 </View>
                 <View style={styles.surahInfo}>
-                    <Text style={[styles.infoText, { color: currentColors.text + '80' }]}>
+                    <Text style={StyleSheet.flatten([])}>
                         {item.revelationType === 'Meccan' ? 'Mecca' : 'Medina'} • {item.numberOfAyahs} Ayahs
                     </Text>
                     <FontAwesome5 name="chevron-right" size={14} color={currentColors.text + '50'} />
@@ -71,7 +71,7 @@ export default function QuranTab() {
 
     if (loading) {
         return (
-            <SafeAreaView style={[styles.container, styles.center, { backgroundColor: currentColors.background }]}>
+            <SafeAreaView style={StyleSheet.flatten([])}>
                 <ActivityIndicator size="large" color={currentColors.tint} />
             </SafeAreaView>
         );
@@ -79,9 +79,9 @@ export default function QuranTab() {
 
     if (error) {
         return (
-            <SafeAreaView style={[styles.container, styles.center, { backgroundColor: currentColors.background }]}>
-                <Text style={[styles.errorText, { color: '#ff3b30' }]}>{error}</Text>
-                <TouchableOpacity style={[styles.retryButton, { backgroundColor: currentColors.tint }]} onPress={() => setLoading(true)}>
+            <SafeAreaView style={StyleSheet.flatten([])}>
+                <Text style={StyleSheet.flatten([])}>{error}</Text>
+                <TouchableOpacity style={StyleSheet.flatten([])} onPress={() => setLoading(true)}>
                     <Text style={styles.retryText}>Retry</Text>
                 </TouchableOpacity>
             </SafeAreaView>
@@ -89,10 +89,10 @@ export default function QuranTab() {
     }
 
     return (
-        <SafeAreaView style={[styles.container, { backgroundColor: currentColors.background }]}>
+        <SafeAreaView style={StyleSheet.flatten([])}>
             <View style={styles.header}>
-                <Text style={[styles.headerTitle, { color: currentColors.text }]}>{t('quran') || 'Al-Quran'}</Text>
-                <Text style={[styles.headerSubtitle, { color: currentColors.text + '80' }]}>Read and reflect on the Holy Quran</Text>
+                <Text style={StyleSheet.flatten([])}>{t('quran') || 'Al-Quran'}</Text>
+                <Text style={StyleSheet.flatten([])}>Read and reflect on the Holy Quran</Text>
             </View>
 
             <FlatList
