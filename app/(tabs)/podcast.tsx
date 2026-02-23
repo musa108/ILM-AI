@@ -158,7 +158,7 @@ export default function Podcast() {
     return (
         <SafeAreaView style={[styles.container, { backgroundColor: currentColors.background }]}>
             <View style={styles.header}>
-                <Text style={[styles.title, { color: currentColors.text }]}>ILM AI Podcast</Text>
+                <Text style={StyleSheet.flatten([[styles.title, { color: currentColors.text }]])}>Nur AI Podcast</Text>
                 <Text style={[styles.subtitle, { color: currentColors.text + '80' }]}>Listen to AI-generated Islamic insights</Text>
             </View>
 

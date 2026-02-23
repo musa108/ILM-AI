@@ -100,7 +100,7 @@ export default function Chat() {
 
       <View style={styles.headerRow}>
         <View>
-          <Text style={[styles.headerTitle, { color: currentColors.text }]}>ILM AI</Text>
+          <Text style={StyleSheet.flatten([[styles.headerTitle, { color: currentColors.text }]])}>Nur AI</Text>
           <Text style={[styles.headerSubtitle, { color: currentColors.text + '80' }]}>Your Islamic Assistant</Text>
         </View>
         <TouchableOpacity onPress={() => setHistoryVisible(true)} style={styles.iconButton}>

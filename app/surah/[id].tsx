@@ -1,9 +1,11 @@
 import { useColorScheme } from '@/components/useColorScheme';
 import Colors from '@/constants/Colors';
 import { FontAwesome5 } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, FlatList, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
 
 interface Ayah {
     number: number;
@@ -76,9 +78,7 @@ export default function SurahScreen() {
         }
     }, [id]);
 
-    const renderAyah = ({ item }: { item: Ayah }) => {
-        // Remove Bismillah from the first verse of every Surah except Surah Al-Fatihah, 
-        // as AlQuran Cloud often includes it in the first verse text.
+    const renderAyah = ({ item, index }: { item: Ayah, index: number }) => {
         let arabicText = item.text;
         const bismillah = "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ";
 
@@ -87,23 +87,32 @@ export default function SurahScreen() {
         }
 
         return (
-            <View style={StyleSheet.flatten([])}>
-                <View style={StyleSheet.flatten([])}>
-                    <Text style={StyleSheet.flatten([])}>{item.numberInSurah}</Text>
+            <Animated.View
+                entering={FadeInDown.delay(index * 50).springify()}
+                style={StyleSheet.flatten([styles.ayahCard, { backgroundColor: currentColors.secondary + '15', borderLeftColor: currentColors.tint }])}
+            >
+                <View style={styles.ayahHeader}>
+                    <View style={StyleSheet.flatten([styles.ayahNumberBadge, { backgroundColor: currentColors.tint }])}>
+                        <Text style={styles.ayahNumberText}>{item.numberInSurah}</Text>
+                    </View>
                     <View style={styles.ayahActions}>
-                        {/* Placeholder for future actions like play audio for specific ayah */}
-                        <FontAwesome5 name="book-reader" size={14} color={currentColors.tint} />
+                        <TouchableOpacity style={styles.actionIcon}>
+                            <FontAwesome5 name="copy" size={14} color={currentColors.text + '60'} />
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.actionIcon}>
+                            <FontAwesome5 name="share-alt" size={14} color={currentColors.text + '60'} />
+                        </TouchableOpacity>
                     </View>
                 </View>
 
-                <Text style={StyleSheet.flatten([])} >
+                <Text style={StyleSheet.flatten([styles.arabicText, { color: currentColors.text }])} >
                     {arabicText}
                 </Text>
 
-                <Text style={StyleSheet.flatten([])}>
+                <Text style={StyleSheet.flatten([styles.translationText, { color: currentColors.text + '90' }])}>
                     {item.translation}
                 </Text>
-            </View>
+            </Animated.View>
         );
     };
 
@@ -111,29 +120,35 @@ export default function SurahScreen() {
         if (!surah) return null;
 
         return (
-            <View style={styles.headerContent}>
-                <Text style={StyleSheet.flatten([])}>{surah.name}</Text>
-                <Text style={StyleSheet.flatten([])}>{surah.englishName}</Text>
-                <Text style={StyleSheet.flatten([])}>{surah.englishNameTranslation}</Text>
+            <Animated.View entering={FadeInUp.delay(200)} style={StyleSheet.flatten([styles.surahBanner, { backgroundColor: currentColors.tint }])}>
+                <LinearGradient
+                    colors={['rgba(255,255,255,0.15)', 'transparent']}
+                    style={StyleSheet.absoluteFill}
+                />
+                <Text style={styles.surahNameArabicLarge}>{surah.name}</Text>
+                <Text style={styles.surahNameEnglishLarge}>{surah.englishName}</Text>
+                <Text style={styles.surahTranslationLarge}>{surah.englishNameTranslation}</Text>
 
-                <View style={styles.surahMeta}>
-                    <Text style={StyleSheet.flatten([])}>
+                <View style={styles.metaBadge}>
+                    <Text style={styles.metaBadgeText}>
                         {surah.revelationType === 'Meccan' ? 'Mecca' : 'Medina'} • {surah.numberOfAyahs} Ayahs
                     </Text>
                 </View>
 
                 {surah.number !== 1 && surah.number !== 9 && (
-                    <Text style={StyleSheet.flatten([])} >
-                        بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ
-                    </Text>
+                    <View style={styles.bismillahContainer}>
+                        <Text style={StyleSheet.flatten([styles.bismillahText, { color: '#fff' }])} >
+                            بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ
+                        </Text>
+                    </View>
                 )}
-            </View>
+            </Animated.View>
         );
     };
 
     if (loading) {
         return (
-            <SafeAreaView style={StyleSheet.flatten([])}>
+            <SafeAreaView style={StyleSheet.flatten([styles.container, styles.center, { backgroundColor: currentColors.background }])}>
                 <ActivityIndicator size="large" color={currentColors.tint} />
             </SafeAreaView>
         );
@@ -141,25 +156,28 @@ export default function SurahScreen() {
 
     if (error) {
         return (
-            <SafeAreaView style={StyleSheet.flatten([])}>
-                <Text style={StyleSheet.flatten([])}>{error}</Text>
-                <TouchableOpacity style={StyleSheet.flatten([])} onPress={() => router.back()}>
-                    <Text style={styles.retryText}>Go Back</Text>
+            <SafeAreaView style={StyleSheet.flatten([styles.container, styles.center, { backgroundColor: currentColors.background }])}>
+                <FontAwesome5 name="exclamation-circle" size={50} color="#ff3b30" style={{ marginBottom: 20 }} />
+                <Text style={StyleSheet.flatten([styles.errorText, { color: currentColors.text }])}>{error}</Text>
+                <TouchableOpacity style={StyleSheet.flatten([styles.retryButton, { backgroundColor: currentColors.tint }])} onPress={() => router.back()}>
+                    <Text style={styles.retryText}>Return to Quran</Text>
                 </TouchableOpacity>
             </SafeAreaView>
         );
     }
 
     return (
-        <SafeAreaView style={StyleSheet.flatten([])}>
-            <View style={StyleSheet.flatten([])}>
-                <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-                    <FontAwesome5 name="arrow-left" size={20} color={currentColors.text} />
+        <SafeAreaView style={StyleSheet.flatten([styles.container, { backgroundColor: currentColors.background }])}>
+            <View style={StyleSheet.flatten([styles.topNav, { backgroundColor: currentColors.background }])}>
+                <TouchableOpacity onPress={() => router.back()} style={styles.navButton}>
+                    <FontAwesome5 name="arrow-left" size={18} color={currentColors.text} />
                 </TouchableOpacity>
-                <Text style={StyleSheet.flatten([])}>
-                    {surah?.englishName || 'Loading...'}
+                <Text style={StyleSheet.flatten([styles.navTitle, { color: currentColors.text }])}>
+                    {surah?.englishName}
                 </Text>
-                <View style={{ width: 40 }} /> {/* Spacer to center title */}
+                <TouchableOpacity style={styles.navButton}>
+                    <FontAwesome5 name="ellipsis-v" size={18} color={currentColors.text} />
+                </TouchableOpacity>
             </View>
 
             <FlatList
@@ -182,105 +200,125 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
-    topBar: {
+    topNav: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        paddingHorizontal: 20,
-        paddingVertical: 15,
+        paddingHorizontal: 15,
+        paddingVertical: 12,
         borderBottomWidth: 1,
         borderBottomColor: 'rgba(0,0,0,0.05)',
     },
-    backButton: {
-        padding: 5,
+    navButton: {
+        width: 40,
+        height: 40,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 20,
     },
-    topBarTitle: {
+    navTitle: {
         fontSize: 18,
         fontWeight: 'bold',
     },
-    headerContent: {
+    surahBanner: {
+        margin: 20,
+        borderRadius: 30,
+        padding: 30,
         alignItems: 'center',
-        paddingVertical: 30,
-        borderBottomWidth: 1,
-        borderBottomColor: 'rgba(0,0,0,0.05)',
-        marginBottom: 20,
+        overflow: 'hidden',
     },
-    surahNameArabic: {
-        fontSize: 42,
+    surahNameArabicLarge: {
+        fontSize: 48,
+        color: '#fff',
         fontWeight: 'bold',
         marginBottom: 10,
     },
-    surahNameEnglish: {
-        fontSize: 24,
+    surahNameEnglishLarge: {
+        fontSize: 26,
+        color: '#fff',
         fontWeight: 'bold',
-        marginBottom: 4,
     },
-    surahTranslation: {
+    surahTranslationLarge: {
         fontSize: 14,
-        marginBottom: 15,
+        color: 'rgba(255,255,255,0.8)',
+        marginBottom: 20,
     },
-    surahMeta: {
-        paddingHorizontal: 16,
-        paddingVertical: 8,
-        backgroundColor: 'rgba(0,0,0,0.05)',
+    metaBadge: {
+        backgroundColor: 'rgba(255,255,255,0.2)',
+        paddingHorizontal: 15,
+        paddingVertical: 6,
         borderRadius: 20,
-        marginBottom: 25,
     },
-    metaText: {
+    metaBadgeText: {
+        color: '#fff',
         fontSize: 12,
-        fontWeight: '600',
+        fontWeight: 'bold',
         textTransform: 'uppercase',
     },
-    bismillah: {
-        fontSize: 28,
-        marginTop: 10,
+    bismillahContainer: {
+        marginTop: 25,
+    },
+    bismillahText: {
+        fontSize: 32,
+        textAlign: 'center',
     },
     listContainer: {
         paddingBottom: 40,
     },
-    ayahContainer: {
-        paddingHorizontal: 20,
-        paddingVertical: 25,
-        borderBottomWidth: 1,
+    ayahCard: {
+        marginHorizontal: 20,
+        marginVertical: 10,
+        padding: 20,
+        borderRadius: 20,
+        borderLeftWidth: 4,
     },
     ayahHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        paddingHorizontal: 15,
-        paddingVertical: 8,
-        borderRadius: 8,
-        marginBottom: 20,
+        marginBottom: 15,
     },
-    ayahNumber: {
-        fontSize: 14,
+    ayahNumberBadge: {
+        width: 28,
+        height: 28,
+        borderRadius: 14,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    ayahNumberText: {
+        color: '#fff',
+        fontSize: 12,
         fontWeight: 'bold',
     },
     ayahActions: {
         flexDirection: 'row',
     },
+    actionIcon: {
+        marginLeft: 15,
+        padding: 5,
+    },
     arabicText: {
         fontSize: 28,
-        lineHeight: 45,
+        lineHeight: 50,
         textAlign: 'right',
-        marginBottom: 20,
-        fontFamily: 'System', // Would be amazing with a dedicated Quranic font
+        marginBottom: 15,
+        fontFamily: 'System',
     },
     translationText: {
         fontSize: 16,
-        lineHeight: 26,
+        lineHeight: 24,
         textAlign: 'left',
     },
     errorText: {
-        fontSize: 16,
-        marginBottom: 20,
+        fontSize: 18,
+        marginBottom: 25,
         textAlign: 'center',
-        paddingHorizontal: 20,
+        paddingHorizontal: 30,
     },
     retryButton: {
-        paddingHorizontal: 24,
+        paddingHorizontal: 25,
         paddingVertical: 12,
-        borderRadius: 8,
+        borderRadius: 15,
     },
     retryText: {
         color: '#fff',

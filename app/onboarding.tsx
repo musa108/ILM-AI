@@ -21,7 +21,7 @@ export default function Onboarding() {
             >
                 <FontAwesome5 name="mosque" size={80} color={currentColors.tint} />
                 <Text style={[styles.title, { color: currentColors.text }]}>
-                    ILM AI</Text>
+                    Nur AI</Text>
                 <Text style={[styles.subtitle, { color: currentColors.text + '80' }]}>
                     Your Intelligent Islamic Companion
                 </Text>
