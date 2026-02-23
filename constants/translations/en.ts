@@ -1,7 +1,7 @@
 export const en = {
     // Navigation
     tab_chat: "Chat",
-    tab_ramadan: "Ramadan",
+    tab_quran: "Quran",
     tab_prayer: "Prayer",
     tab_podcast: "Podcast",
     tab_profile: "Profile",
@@ -38,5 +38,5 @@ export const en = {
     profile_account: "Account",
     profile_logout: "Log Out",
     profile_theme: "Theme",
-    ramadan: "Ramadan",
+    quran: "Al-Quran",
 };

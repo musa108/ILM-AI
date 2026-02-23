@@ -33,10 +33,10 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="ramadan"
+        name="quran"
         options={{
-          title: t('tab_ramadan') || 'Ramadan',
-          tabBarIcon: ({ color }: { color: string }) => <FontAwesome5 name="moon" size={18} color={color} />,
+          title: t('tab_quran') || 'Quran',
+          tabBarIcon: ({ color }: { color: string }) => <FontAwesome5 name="book-open" size={18} color={color} />,
         }}
       />
 

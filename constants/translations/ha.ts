@@ -1,7 +1,7 @@
 export const ha = {
     // Navigation
     tab_chat: "Hira",
-    tab_ramadan: "Ramadan",
+    tab_quran: "Alkur'ani",
     tab_prayer: "Sallah",
     tab_podcast: "Kwasfan Fayil",
     tab_profile: "Bayani",
