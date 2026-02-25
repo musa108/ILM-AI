@@ -2,7 +2,7 @@ export default {
     expo: {
         name: "Nur AI",
         owner: "nmanagi22s-organization",
-        slug: "nur-ai",
+        slug: "ilm-ai",
         version: "1.0.0",
         orientation: "portrait",
         icon: "./assets/icon.png",

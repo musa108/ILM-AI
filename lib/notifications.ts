@@ -1,9 +1,45 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { CalculationMethod, Coordinates, PrayerTimes } from 'adhan';
 import { Audio } from 'expo-av';
+import * as BackgroundFetch from 'expo-background-fetch';
 import * as Haptics from 'expo-haptics';
 import * as Location from 'expo-location';
 import * as Notifications from 'expo-notifications';
+import * as TaskManager from 'expo-task-manager';
 import { Platform } from 'react-native';
+
+const BACKGROUND_FETCH_TASK = 'background-notification-refresh';
+
+TaskManager.defineTask(BACKGROUND_FETCH_TASK, async () => {
+    try {
+        console.log('Running background notification refresh...');
+        const now = new Date();
+        const lastRun = await AsyncStorage.getItem('last_bg_refresh_date');
+        const todayStr = now.toISOString().split('T')[0];
+
+        if (lastRun !== todayStr) {
+            await setupNotifications();
+            await AsyncStorage.setItem('last_bg_refresh_date', todayStr);
+            return BackgroundFetch.BackgroundFetchResult.NewData;
+        }
+        return BackgroundFetch.BackgroundFetchResult.NoData;
+    } catch (err) {
+        console.error('Background fetch failed:', err);
+        return BackgroundFetch.BackgroundFetchResult.Failed;
+    }
+});
+
+async function registerBackgroundFetchAsync() {
+    try {
+        await BackgroundFetch.registerTaskAsync(BACKGROUND_FETCH_TASK, {
+            minimumInterval: 60 * 60 * 4, // 4 hours
+            stopOnTerminate: false,
+            startOnBoot: true,
+        });
+    } catch (err) {
+        console.log('Failed to register background task:', err);
+    }
+}
 
 const ADHAN_URL = 'https://archive.org/download/adhan-arabb-world/adhan.mp3';
 let adhanSound: Audio.Sound | null = null;
@@ -117,13 +153,23 @@ export async function setupNotifications() {
         }
 
         await schedulePrayerReminders(location?.coords);
+        await registerBackgroundFetchAsync();
     } catch (error) {
         console.error('Error setting up notifications:', error);
     }
 }
 
 async function scheduleDailyQuote() {
-    const randomQuote = QUOTES[Math.floor(Math.random() * QUOTES.length)];
+    const enabled = await AsyncStorage.getItem('daily_quote_enabled');
+    if (enabled === 'false') return;
+
+    const lastQuote = await AsyncStorage.getItem('last_daily_quote');
+    let randomQuote;
+    do {
+        randomQuote = QUOTES[Math.floor(Math.random() * QUOTES.length)];
+    } while (randomQuote === lastQuote && QUOTES.length > 1);
+
+    await AsyncStorage.setItem('last_daily_quote', randomQuote);
 
     await Notifications.scheduleNotificationAsync({
         content: {
@@ -131,24 +177,27 @@ async function scheduleDailyQuote() {
             body: randomQuote,
         },
         trigger: {
+            type: Notifications.SchedulableTriggerInputTypes.DAILY,
             hour: 9,
             minute: 0,
-            repeats: true,
         } as any,
     });
 }
 
 async function scheduleFridaySermonReminder() {
+    const enabled = await AsyncStorage.getItem('friday_sermon_enabled');
+    if (enabled === 'false') return;
+
     await Notifications.scheduleNotificationAsync({
         content: {
             title: "Jumu'ah Reminder",
             body: "Don't forget to listen to the Friday Reminder podcast!",
         },
         trigger: {
+            type: Notifications.SchedulableTriggerInputTypes.WEEKLY,
             weekday: 6, // Friday
             hour: 10,
             minute: 0,
-            repeats: true,
         } as any
     });
 }
@@ -156,6 +205,9 @@ async function scheduleFridaySermonReminder() {
 async function schedulePrayerReminders(coords?: { latitude: number, longitude: number }) {
     // Cancel existing to avoid duplicates
     await Notifications.cancelAllScheduledNotificationsAsync();
+
+    const enabled = await AsyncStorage.getItem('prayer_reminders_enabled');
+    if (enabled === 'false') return;
 
     let prayerTimes: any;
 
@@ -182,9 +234,9 @@ async function schedulePrayerReminders(coords?: { latitude: number, longitude: n
                 sound: 'adhan.wav',
             },
             trigger: {
+                type: Notifications.SchedulableTriggerInputTypes.DAILY,
                 hour: prayer.hour,
                 minute: prayer.minute,
-                repeats: true,
             } as any,
         });
     }

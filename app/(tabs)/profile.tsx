@@ -1,8 +1,9 @@
 import { FontAwesome5 } from '@expo/vector-icons'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useRouter } from 'expo-router'
-import React, { useState } from 'react'
-import { Alert, Modal, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { Alert, Modal, Pressable, ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native'
 import Animated, { FadeInDown } from 'react-native-reanimated'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
@@ -26,6 +27,30 @@ export default function Profile() {
 
     const [modalVisible, setModalVisible] = useState(false);
     const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+    const [settingsModalVisible, setSettingsModalVisible] = useState(false);
+
+    const [dailyQuoteEnabled, setDailyQuoteEnabled] = useState(true);
+    const [fridaySermonEnabled, setFridaySermonEnabled] = useState(true);
+    const [prayerRemindersEnabled, setPrayerRemindersEnabled] = useState(true);
+
+    useEffect(() => {
+        const loadSettings = async () => {
+            const quote = await AsyncStorage.getItem('daily_quote_enabled');
+            const friday = await AsyncStorage.getItem('friday_sermon_enabled');
+            const prayer = await AsyncStorage.getItem('prayer_reminders_enabled');
+            if (quote !== null) setDailyQuoteEnabled(quote === 'true');
+            if (friday !== null) setFridaySermonEnabled(friday === 'true');
+            if (prayer !== null) setPrayerRemindersEnabled(prayer === 'true');
+        };
+        loadSettings();
+    }, []);
+
+    const toggleSetting = async (key: string, value: boolean, setter: any) => {
+        setter(value);
+        await AsyncStorage.setItem(key, value.toString());
+        // Trigger a notification refresh when settings change
+        import('@/lib/notifications').then(({ setupNotifications }) => setupNotifications());
+    }
 
     const onDeleteAccount = () => {
         setDeleteModalVisible(true);
@@ -111,7 +136,7 @@ export default function Profile() {
                     delay={300}
                     onPress={() => router.push('/(tabs)/change-password')}
                 />
-                <MenuItem icon="cog" title="Settings" delay={400} />
+                <MenuItem icon="cog" title="Settings" delay={400} onPress={() => setSettingsModalVisible(true)} />
 
                 <TouchableOpacity
                     style={[styles.logoutButton, { backgroundColor: '#e74c3c20', marginBottom: 12 }]}
@@ -209,6 +234,65 @@ export default function Profile() {
                         </View>
                     </View>
                 </Pressable>
+            </Modal>
+
+            {/* Settings Modal */}
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={settingsModalVisible}
+                onRequestClose={() => setSettingsModalVisible(false)}
+            >
+                <View style={[styles.modalOverlay, { justifyContent: 'flex-end' }]}>
+                    <View style={[styles.modalContent, { width: '100%', borderBottomLeftRadius: 0, borderBottomRightRadius: 0, paddingBottom: 40, paddingTop: 30 }]}>
+                        <Text style={[styles.modalTitle, { color: currentColors.text, marginBottom: 25 }]}>App Settings</Text>
+
+                        <Text style={[styles.sectionTitle, { color: currentColors.text + '60', marginBottom: 10 }]}>Notifications</Text>
+
+                        <View style={styles.settingRow}>
+                            <View style={{ flex: 1, paddingRight: 10 }}>
+                                <Text style={[styles.settingTitle, { color: currentColors.text }]}>Daily Wisdom Quote</Text>
+                                <Text style={[styles.settingDesc, { color: currentColors.text + '80' }]}>Receive a daily Islamic quote at 9:00 AM</Text>
+                            </View>
+                            <Switch
+                                value={dailyQuoteEnabled}
+                                onValueChange={(v) => toggleSetting('daily_quote_enabled', v, setDailyQuoteEnabled)}
+                                trackColor={{ true: currentColors.tint, false: currentColors.text + '20' }}
+                            />
+                        </View>
+
+                        <View style={styles.settingRow}>
+                            <View style={{ flex: 1, paddingRight: 10 }}>
+                                <Text style={[styles.settingTitle, { color: currentColors.text }]}>Friday Sermon Reminder</Text>
+                                <Text style={[styles.settingDesc, { color: currentColors.text + '80' }]}>Receive a reminder for Jumu'ah</Text>
+                            </View>
+                            <Switch
+                                value={fridaySermonEnabled}
+                                onValueChange={(v) => toggleSetting('friday_sermon_enabled', v, setFridaySermonEnabled)}
+                                trackColor={{ true: currentColors.tint, false: currentColors.text + '20' }}
+                            />
+                        </View>
+
+                        <View style={styles.settingRow}>
+                            <View style={{ flex: 1, paddingRight: 10 }}>
+                                <Text style={[styles.settingTitle, { color: currentColors.text }]}>Prayer Times (Adhan)</Text>
+                                <Text style={[styles.settingDesc, { color: currentColors.text + '80' }]}>Receive notifications for the 5 daily prayers</Text>
+                            </View>
+                            <Switch
+                                value={prayerRemindersEnabled}
+                                onValueChange={(v) => toggleSetting('prayer_reminders_enabled', v, setPrayerRemindersEnabled)}
+                                trackColor={{ true: currentColors.tint, false: currentColors.text + '20' }}
+                            />
+                        </View>
+
+                        <TouchableOpacity
+                            style={[styles.modalButton, { backgroundColor: currentColors.tint, marginTop: 30, width: '100%' }]}
+                            onPress={() => setSettingsModalVisible(false)}
+                        >
+                            <Text style={[styles.modalButtonText, { color: '#fff' }]}>Done</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
             </Modal>
         </ScrollView>
     )
@@ -374,5 +458,21 @@ const styles = StyleSheet.create({
     modalButtonText: {
         fontWeight: 'bold',
         fontSize: 14,
+    },
+    settingRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingVertical: 15,
+        borderBottomWidth: 1,
+        borderBottomColor: 'rgba(150,150,150,0.1)',
+    },
+    settingTitle: {
+        fontSize: 16,
+        fontWeight: '600',
+        marginBottom: 4,
+    },
+    settingDesc: {
+        fontSize: 13,
     },
 })
